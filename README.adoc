@@ -1,0 +1,11 @@
+= Robocode Robot
+
+== Prerequirements
+
+- java8-jdk
+
+== Setup
+
+. Install robocode into _robocode_ directory.
+
+. Execute _./run.sh_.
