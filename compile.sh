@@ -14,10 +14,10 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 export CLASSPATH=/usr/lib/jvm/java-8-openjdk/lib
 
 echo "Compiling robot..."
-javac -classpath ${SCRIPT_PATH}/robocode/libs/robocode.jar ${SCRIPT_PATH}/my-robot/QLearningRobot.java
+javac -classpath ${SCRIPT_PATH}/robocode/libs/robocode.jar ${SCRIPT_PATH}/my-robot/*.java
 
 echo "Copying robot..."
 mkdir -p ${SCRIPT_PATH}/robocode/robots/iwium
-cp ${SCRIPT_PATH}/my-robot/QLearningRobot.class ${SCRIPT_PATH}/robocode/robots/iwium/
+mv ${SCRIPT_PATH}/my-robot/*.class ${SCRIPT_PATH}/robocode/robots/iwium/
 
 echo "Done!"
