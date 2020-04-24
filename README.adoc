@@ -9,3 +9,5 @@
 . Install robocode into _robocode_ directory.
 
 . Execute _./run.sh_.
+
+. Create new battle with QLearning robot.
