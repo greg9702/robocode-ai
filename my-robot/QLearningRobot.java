@@ -3,6 +3,7 @@ package iwium;
 import robocode.*;
 import java.awt.Color;
 import java.io.*;
+import java.util.*;
 
 // API help : https://robocode.sourceforge.io/docs/robocode/robocode/Robot.html
 
@@ -19,11 +20,34 @@ public class QLearningRobot extends AdvancedRobot
 
   private double m_cumulativeReward;
   private QTable m_qtable;
+  private State m_currentState;
+
+  // QLearning params
+  Param m_robotXPos;
+  int m_robotXPos_bins = 8;
+  Param m_robotYPos;
+  int m_robotYPos_bins = 6;
+  Param m_absAngleToEnemy;
+  int m_absAngleToEnemy_bins = 4;
+  Param m_distanceToEnemy;
+  int m_distanceToEnemy_bins = 4;
 
   public QLearningRobot()
   {
     System.out.println("Constructor invoked.");
     m_cumulativeReward = 0;
+
+    m_robotXPos = new Param("robotXPos", 0, getBattleFieldWidth(), m_robotXPos_bins);
+    m_robotYPos = new Param("robotYPos", 0, getBattleFieldHeight(), m_robotYPos_bins);
+    m_absAngleToEnemy = new Param("absAngleToEnemy", 0, 360, m_absAngleToEnemy_bins);
+    int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
+    m_distanceToEnemy = new Param("absAngleToEnemy", 0, maxDistance, m_distanceToEnemy_bins);
+    m_currentState = new State(new ArrayList<>(Arrays.asList(
+      m_robotXPos,
+      m_robotYPos,
+      m_absAngleToEnemy,
+      m_distanceToEnemy
+    )));
   }
 
   /**

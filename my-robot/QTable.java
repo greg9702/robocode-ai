@@ -9,11 +9,11 @@ import java.io.Serializable;
 
 public class QTable implements Serializable
 {
-  private HashMap<Pair<State,Action>, Double> rewards;
+  private HashMap<Pair<State,Action>, Double> m_rewards;
 
   public QTable()
   {
-    rewards = new HashMap<>(); 
+    m_rewards = new HashMap<Pair<State,Action>,Double>();
   }
 
   /**
@@ -38,5 +38,24 @@ public class QTable implements Serializable
     QTable table = (QTable) ois.readObject();
     ois.close();
     return table;
+  }
+
+  /**
+   * Updates reward in QTable.
+   * @param State s
+   * @param Action a
+   * @param double reward
+   */
+  public void updateRewards(State s, Action a, double reward)
+  {
+    Pair key = new Pair(s, a);
+    // init key if not exists
+    if (m_rewards.containsKey(key) == false) {
+      m_rewards.put(key, new Double(0));
+    }
+
+    // TODO consider previous value
+    m_rewards.put(key, new Double(reward));
+    return;
   }
 }
