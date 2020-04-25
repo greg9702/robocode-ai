@@ -177,7 +177,48 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onHitWall(HitWallEvent e) {
     m_reward += m_hitWallReward;
+    bounceFromWall(150);
     return;
+  }
+
+  /**
+   * Finds closest wall and runs toward opposite direction.
+   * @param int safeDistance
+   */
+  private void bounceFromWall(int safeDistance)
+  {
+    double fieldWidth = getBattleFieldWidth();
+    double fieldHeight = getBattleFieldHeight();
+    double xPos = getX();
+    double yPos = getY();
+    double currentAngle = getHeading();
+    // distances to walls: left, bottom, right, top
+    double[] wallDistances = {xPos, yPos, fieldWidth-xPos, fieldHeight-yPos};
+    double minDistance = Arrays.stream(wallDistances).min().getAsDouble();
+    int wallCase = Arrays.asList(wallDistances).indexOf(minDistance);
+    double angleDiff = 0;
+    switch (wallCase) {
+      case 0: // left
+        angleDiff = currentAngle - 270;
+        break;
+      case 1: // bottom
+        angleDiff = currentAngle - 180;
+        break;
+      case 2: // right
+        angleDiff = currentAngle - 90;
+        break;
+      case 3: // top
+        angleDiff = currentAngle - 0;
+        break;
+      default:
+    }
+    if (angleDiff >= 0) {
+      turnLeft(angleDiff);
+    } else {
+      turnRight(angleDiff);
+    }
+    // note: minDistance is probably always equal to 0
+    ahead(safeDistance - minDistance);
   }
 
 }  // class QLearningRobot
