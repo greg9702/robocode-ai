@@ -24,6 +24,11 @@ public class QLearningRobot extends AdvancedRobot
   private State m_currentState;
 
   // QLearning params
+  private double m_alpha = 1.0; // learning rate
+  private double m_gamma = 0.9; // discount factor
+  private double m_epsilon = 1.0; // experiment rate
+
+  // QLearning environment params
   Param m_robotXPos;
   int m_robotXPos_bins = 8;
   Param m_robotYPos;
@@ -32,6 +37,14 @@ public class QLearningRobot extends AdvancedRobot
   int m_absAngleToEnemy_bins = 4;
   Param m_distanceToEnemy;
   int m_distanceToEnemy_bins = 4;
+
+  // QLearning environment actions
+  private ArrayList<Action> m_actions;
+  private static final String m_actionFire2 = "fire2";
+  private static final String m_actionFrontLeft = "frontLeft";
+  private static final String m_actionFrontRight = "frontRight";
+  private static final String m_actionBackLeft = "backLeft";
+  private static final String m_actionBackRight = "backRight";
 
   // rewards
   private double m_hitRobotReward = -2;
@@ -56,6 +69,13 @@ public class QLearningRobot extends AdvancedRobot
       m_absAngleToEnemy,
       m_distanceToEnemy
     )));
+
+    m_actions = new ArrayList<Action>();
+    m_actions.add(new Action(0, m_actionFire2));
+    m_actions.add(new Action(1, m_actionFrontLeft));
+    m_actions.add(new Action(2, m_actionFrontRight));
+    m_actions.add(new Action(3, m_actionBackLeft));
+    m_actions.add(new Action(4, m_actionBackRight));
   }
 
   /**
@@ -103,8 +123,16 @@ public class QLearningRobot extends AdvancedRobot
     setColors(Color.green, Color.black, Color.black); // body,gun,radar
 
     // Robot main loop
-    while(true) {
-      // Replace the next 4 lines with any behavior you would like
+    while (true) {
+
+      Random rand = new Random();
+      if (m_epsilon > rand.nextDouble()) {
+        // TODO experiment
+      } else {
+        // TODO pick best
+      }
+
+      // temporary actions
       ahead(100);
       turnGunRight(360);
       back(100);
@@ -115,12 +143,21 @@ public class QLearningRobot extends AdvancedRobot
   }
 
   /**
-   * onScannedRobot: What to do when you see another robot
+   * What to do when our robot scanned enemy.
    */
   public void onScannedRobot(ScannedRobotEvent e)
   {
-    // Replace the next line with any behavior you would like
-    fire(1);
+    double enemyDistance = e.getDistance();
+    m_distanceToEnemy.setNewValue(enemyDistance);
+
+    double bearing = e.getBearing();
+    double absBearing = bearing + 180;
+    m_absAngleToEnemy.setNewValue(absBearing);
+
+
+    //fire(1/2/3) // we want AI learn to fire by itself
+
+    return;
   }
 
   /**
@@ -219,6 +256,58 @@ public class QLearningRobot extends AdvancedRobot
     }
     // note: minDistance is probably always equal to 0
     ahead(safeDistance - minDistance);
+  }
+
+  /**
+   * What to do on every status (tick) update.
+   */
+  public void onStatus(StatusEvent e)
+  {
+    RobotStatus s = e.getStatus();
+    double xPos = s.getX();
+    double yPos = s.getY();
+    m_robotXPos.setNewValue(xPos);
+    m_robotYPos.setNewValue(yPos);
+    return;
+  }
+
+  /**
+   * Performs one of defined actions.
+   * @param Action a
+   */
+  private void performAction(Action action)
+  {
+    double moveDistance = 150;
+    double firePower = 2;
+    double rotationDegrees = 30;
+
+    String name = action.getName();
+    switch (name) {
+      case m_actionFire2:
+        fire(firePower);
+        break;
+      case m_actionFrontLeft:
+        turnLeft(rotationDegrees);
+        ahead(moveDistance);
+        break;
+      case m_actionFrontRight:
+        turnRight(rotationDegrees);
+        ahead(moveDistance);
+        break;
+      case m_actionBackLeft:
+        turnLeft(rotationDegrees);
+        back(moveDistance);
+        break;
+      case m_actionBackRight:
+        turnRight(rotationDegrees);
+        back(moveDistance);
+        break;
+      default:
+        System.out.println("Error: Unknown action!");
+    }
+    // TODO consider using turnGun[Left/Right]
+
+    return;
   }
 
 }  // class QLearningRobot
