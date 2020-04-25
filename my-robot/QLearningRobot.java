@@ -19,6 +19,7 @@ public class QLearningRobot extends AdvancedRobot
   final String QTABLE_FILENAME = "qtable.bin";
 
   private double m_cumulativeReward;
+  private double m_reward;
   private QTable m_qtable;
   private State m_currentState;
 
@@ -31,6 +32,13 @@ public class QLearningRobot extends AdvancedRobot
   int m_absAngleToEnemy_bins = 4;
   Param m_distanceToEnemy;
   int m_distanceToEnemy_bins = 4;
+
+  // rewards
+  private double m_hitRobotReward = -2;
+  private double m_bulletHitReward = 3;
+  private double m_hitByBulletReward = -3;
+  private double m_bulletMissedReward = 0;
+  private double m_hitWallReward = -3.5;
 
   public QLearningRobot()
   {
@@ -116,24 +124,6 @@ public class QLearningRobot extends AdvancedRobot
   }
 
   /**
-   * onHitByBullet: What to do when you're hit by a bullet
-   */
-  public void onHitByBullet(HitByBulletEvent e)
-  {
-    // Replace the next line with any behavior you would like
-    back(10);
-  }
-
-  /**
-   * onHitWall: What to do when you hit a wall
-   */
-  public void onHitWall(HitWallEvent e)
-  {
-    // Replace the next line with any behavior you would like
-    back(20);
-  }
-
-  /**
    * onRoundEnded: What to do when round is ended
    */
   public void onRoundEnded(RoundEndedEvent e)
@@ -148,6 +138,46 @@ public class QLearningRobot extends AdvancedRobot
   public void onBattleEnded(BattleEndedEvent e)
   {
     System.out.println("Battle finished.");
+  }
+
+  /**
+   * What to do when our robot collides with enemy.
+   */
+  public void onHitRobot(HitRobotEvent event) {
+    m_reward += m_hitRobotReward;
+    return;
+  }
+
+  /**
+   * What to do when our robot hit enemy.
+   */
+  public void onBulletHit(BulletHitEvent event) {
+    m_reward += m_bulletHitReward;
+    return;
+  }
+
+  /**
+   * What to do when our robot got bullet from enemy.
+   */
+  public void onHitByBullet(HitByBulletEvent event) {
+    m_reward += m_hitByBulletReward;
+    return;
+  }
+
+  /**
+   * What to do when our robot misses.
+   */
+  public void onBulletMissed(BulletMissedEvent event) {
+    m_reward += m_bulletMissedReward;
+    return;
+  }
+
+  /**
+   * What to do when robot hits wall.
+   */
+  public void onHitWall(HitWallEvent e) {
+    m_reward += m_hitWallReward;
+    return;
   }
 
 }  // class QLearningRobot
