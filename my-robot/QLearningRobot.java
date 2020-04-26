@@ -123,36 +123,30 @@ public class QLearningRobot extends AdvancedRobot
     // Robot main loop
     while (true) {
 
+      State stateBeforeAction = (State)m_currentState.clone();
+      Action action;
       Random rand = new Random();
-
       if (m_epsilon > rand.nextDouble()) {
-        // Here we are experimenting with new states/actions
-        // Pick random action
-        State stateBeforeAction = (State)m_currentState.clone();
+        // pick random action
         int actionIndex = rand.nextInt(m_actions.size());
-        Action action = m_actions.get(actionIndex);
-        // Reset reward and execute
-        m_reward = 0;
-        performAction(action);
-
-        // TODO consider adding difference between our and enemy
-        // energy levels to reward.
-
-        // Update rewards
-        m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
-        m_cumulativeReward += m_reward;
-
+        action = m_actions.get(actionIndex);
       } else {
-        // Here we pick best action
-
-        // TODO
+        // pick best action
+        action = m_qtable.findBestAction(m_currentState);
       }
 
-      // temporary actions
-      ahead(100);
-      turnGunRight(360);
-      back(100);
-      turnGunRight(360);
+      // Reset reward and execute
+      m_reward = 0;
+      //turnGunRight(360); // ???
+      performAction(action);
+      //turnGunRight(360); // ???
+
+      // TODO consider adding difference between our and enemy
+      // energy levels to reward.
+
+      // Update rewards
+      m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
+      m_cumulativeReward += m_reward;
 
       saveQTable();
     }
@@ -300,6 +294,7 @@ public class QLearningRobot extends AdvancedRobot
     String name = action.getName();
     switch (name) {
       case m_actionFire2:
+        // TODO consider turning gun toward enemy
         fire(firePower);
         break;
       case m_actionFrontLeft:
