@@ -59,7 +59,7 @@ public class Param
     //  eg. 0.5 -> means it is in the center
     double value_place_among_buckets = (m_value - m_min) / (m_max - m_min);
     int bin_id = (int)(Math.round((m_buckets - 1) * value_place_among_buckets));
-    
+
     // small correction if we get outside
     bin_id = Math.min(m_buckets - 1, Math.max(0, bin_id));
 
