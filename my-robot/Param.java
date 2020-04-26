@@ -1,8 +1,9 @@
 package iwium;
 
 import java.lang.Math;
+import java.io.Serializable;
 
-public class Param
+public class Param implements Serializable
 {
   private String m_name;
   private double m_min;
@@ -20,6 +21,18 @@ public class Param
   }
 
   /**
+   * Copy constructor. Required for storing own copy of parameters.
+   * @return Param
+   */
+  public Param(Param p) {
+    m_name = p.m_name;
+    m_min = p.m_min;
+    m_max = p.m_max;
+    m_buckets = p.m_buckets;
+    m_value = p.m_value;
+  }
+
+  /**
    * Gets param name.
    * @return String
    */
@@ -33,8 +46,11 @@ public class Param
    * Gets real value of param.
    * @return double
    */
-  public double getValue()
+  public double getValue() throws RobotException
   {
+    if (m_value == null) {
+      throw new RobotException("Unable to get value of empty parameter.");
+    }
     Double val = m_value;
     return val;
   }

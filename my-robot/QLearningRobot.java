@@ -27,13 +27,13 @@ public class QLearningRobot extends AdvancedRobot
   private double m_epsilon = 1.0; // experiment rate
 
   // QLearning environment params
-  Param m_robotXPos;
+  String m_robotXPosParamName;
   int m_robotXPos_bins = 8;
-  Param m_robotYPos;
+  String m_robotYPosParamName;
   int m_robotYPos_bins = 6;
-  Param m_absAngleToEnemy;
+  String m_absAngleToEnemyParamName;
   int m_absAngleToEnemy_bins = 4;
-  Param m_distanceToEnemy;
+  String m_distanceToEnemyParamName;
   int m_distanceToEnemy_bins = 4;
 
   // QLearning environment actions
@@ -56,16 +56,12 @@ public class QLearningRobot extends AdvancedRobot
     System.out.println("Constructor invoked.");
     m_cumulativeReward = 0;
 
-    m_robotXPos = new Param("robotXPos", 0, getBattleFieldWidth(), m_robotXPos_bins);
-    m_robotYPos = new Param("robotYPos", 0, getBattleFieldHeight(), m_robotYPos_bins);
-    m_absAngleToEnemy = new Param("absAngleToEnemy", 0, 360, m_absAngleToEnemy_bins);
     int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
-    m_distanceToEnemy = new Param("absAngleToEnemy", 0, maxDistance, m_distanceToEnemy_bins);
     m_currentState = new State(new ArrayList<>(Arrays.asList(
-      m_robotXPos,
-      m_robotYPos,
-      m_absAngleToEnemy,
-      m_distanceToEnemy
+      new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
+      new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
+      new Param(m_absAngleToEnemyParamName, 0, 360, m_absAngleToEnemy_bins),
+      new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins)
     )));
 
     m_actions = new ArrayList<Action>();
@@ -123,7 +119,7 @@ public class QLearningRobot extends AdvancedRobot
     // Robot main loop
     while (true) {
 
-      State stateBeforeAction = (State)m_currentState.clone();
+      State stateBeforeAction = new State(m_currentState);
       Action action;
       Random rand = new Random();
       if (m_epsilon > rand.nextDouble()) {
@@ -158,12 +154,11 @@ public class QLearningRobot extends AdvancedRobot
   public void onScannedRobot(ScannedRobotEvent e)
   {
     double enemyDistance = e.getDistance();
-    m_distanceToEnemy.setNewValue(enemyDistance);
+    m_currentState.updateParam(m_distanceToEnemyParamName, enemyDistance);
 
     double bearing = e.getBearing();
     double absBearing = bearing + 180;
-    m_absAngleToEnemy.setNewValue(absBearing);
-
+    m_currentState.updateParam(m_absAngleToEnemyParamName, absBearing);
 
     //fire(1/2/3) // we want AI learn to fire by itself
 
@@ -276,8 +271,8 @@ public class QLearningRobot extends AdvancedRobot
     RobotStatus s = e.getStatus();
     double xPos = s.getX();
     double yPos = s.getY();
-    m_robotXPos.setNewValue(xPos);
-    m_robotYPos.setNewValue(yPos);
+    m_currentState.updateParam(m_robotXPosParamName, xPos);
+    m_currentState.updateParam(m_robotYPosParamName, yPos);
     return;
   }
 
