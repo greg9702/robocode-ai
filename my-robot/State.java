@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class State
+public class State implements Cloneable
 {
   private ArrayList<Param> m_params;
 
@@ -17,7 +17,7 @@ public class State
     m_params = params;
   }
 
-  private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException 
+  private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException
   {
     m_params = new ArrayList<Param>();
     int num_params = aInputStream.readInt();
@@ -27,7 +27,7 @@ public class State
     }
   }
 
-  private void writeObject(ObjectOutputStream aOutputStream) throws IOException 
+  private void writeObject(ObjectOutputStream aOutputStream) throws IOException
   {
     // sort params by name
     Collections.sort(m_params, new Comparator<Param>() {
@@ -42,6 +42,17 @@ public class State
     aOutputStream.writeInt(m_params.size());
     for (Param p : m_params) {
       aOutputStream.writeObject(p);
+    }
+  }
+
+  @Override
+  protected Object clone() {
+    // TODO does params are cloned?
+    try {
+      return super.clone();
+    } catch (CloneNotSupportedException e) {
+      System.out.println("Unable to clone!");
+      return new Object();
     }
   }
 };

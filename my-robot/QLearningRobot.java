@@ -23,9 +23,7 @@ public class QLearningRobot extends AdvancedRobot
   private QTable m_qtable;
   private State m_currentState;
 
-  // QLearning params
-  private double m_alpha = 1.0; // learning rate
-  private double m_gamma = 0.9; // discount factor
+  // learning params
   private double m_epsilon = 1.0; // experiment rate
 
   // QLearning environment params
@@ -94,7 +92,7 @@ public class QLearningRobot extends AdvancedRobot
         System.out.println("Fallback to fresh QTable instance.");
       }
     }
-    m_qtable = new QTable();
+    m_qtable = new QTable(m_actions);
   }
 
   /**
@@ -126,10 +124,28 @@ public class QLearningRobot extends AdvancedRobot
     while (true) {
 
       Random rand = new Random();
+
       if (m_epsilon > rand.nextDouble()) {
-        // TODO experiment
+        // Here we are experimenting with new states/actions
+        // Pick random action
+        State stateBeforeAction = (State)m_currentState.clone();
+        int actionIndex = rand.nextInt(m_actions.size());
+        Action action = m_actions.get(actionIndex);
+        // Reset reward and execute
+        m_reward = 0;
+        performAction(action);
+
+        // TODO consider adding difference between our and enemy
+        // energy levels to reward.
+
+        // Update rewards
+        m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
+        m_cumulativeReward += m_reward;
+
       } else {
-        // TODO pick best
+        // Here we pick best action
+
+        // TODO
       }
 
       // temporary actions
