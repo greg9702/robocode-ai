@@ -81,4 +81,19 @@ public class Param implements Serializable
 
     return bin_id;
   }
+
+  /**
+   * Constructs String that may be used to create hashmap key.
+   * @return String
+   */
+  public String getStringKey()
+  {
+    String key;
+    if (m_value == null) {
+      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + "NULL";
+    } else {
+      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + m_value;
+    }
+    return key;
+  }
 }
