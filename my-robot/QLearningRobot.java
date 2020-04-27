@@ -27,13 +27,13 @@ public class QLearningRobot extends AdvancedRobot
   private double m_epsilon = 1.0; // experiment rate
 
   // QLearning environment params
-  String m_robotXPosParamName;
+  String m_robotXPosParamName = "m_robotXPosParamName";
   int m_robotXPos_bins = 8;
-  String m_robotYPosParamName;
+  String m_robotYPosParamName = "m_robotYPosParamName";
   int m_robotYPos_bins = 6;
-  String m_absAngleToEnemyParamName;
+  String m_absAngleToEnemyParamName = "m_absAngleToEnemyParamName";
   int m_absAngleToEnemy_bins = 4;
-  String m_distanceToEnemyParamName;
+  String m_distanceToEnemyParamName = "m_distanceToEnemyParamName";
   int m_distanceToEnemy_bins = 4;
 
   // QLearning environment actions
@@ -276,6 +276,10 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onStatus(StatusEvent e)
   {
+    if (m_currentState == null) {
+      System.out.println("Init not called yet. Skipping onStatus.");
+      return;
+    }
     RobotStatus s = e.getStatus();
     double xPos = s.getX();
     double yPos = s.getY();
