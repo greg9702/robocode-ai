@@ -51,9 +51,13 @@ public class QLearningRobot extends AdvancedRobot
   private double m_bulletMissedReward = 0;
   private double m_hitWallReward = -3.5;
 
-  public QLearningRobot()
+  /**
+   * We have to use custom init method called imediatelly after run(),
+   * because in constructor we cannot call a lot of robocode method.
+   */
+  public void init()
   {
-    System.out.println("Constructor invoked.");
+    System.out.println("init() invoked.");
     m_cumulativeReward = 0;
 
     int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
@@ -70,6 +74,10 @@ public class QLearningRobot extends AdvancedRobot
     m_actions.add(new Action(2, m_actionFrontRight));
     m_actions.add(new Action(3, m_actionBackLeft));
     m_actions.add(new Action(4, m_actionBackRight));
+
+    initQTable();
+
+    return;
   }
 
   /**
@@ -111,7 +119,7 @@ public class QLearningRobot extends AdvancedRobot
   public void run()
   {
     System.out.println("run() invoked.");
-    initQTable();
+    init();
 
     // Initialization of the robot should be put here
     setColors(Color.green, Color.black, Color.black); // body,gun,radar
