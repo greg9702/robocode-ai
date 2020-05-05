@@ -1,6 +1,8 @@
 package iwium;
 
-public class Action
+import java.io.Serializable;
+
+public class Action implements Serializable
 {
   private int m_id;
   private String m_name;
