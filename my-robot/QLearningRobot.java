@@ -329,7 +329,7 @@ public class QLearningRobot extends AdvancedRobot
   {
     double moveDistance = 150;
     double firePower = 2;
-    double rotationDegrees = 30;
+    double rotationDegrees = 60;
 
     String name = action.getName();
     switch (name) {
@@ -348,18 +348,22 @@ public class QLearningRobot extends AdvancedRobot
         break;
       case m_actionFrontLeft:
         setTurnLeft(rotationDegrees);
+        execute(); // start turn, but does not wait until complete
         ahead(moveDistance);
         break;
       case m_actionFrontRight:
         setTurnRight(rotationDegrees);
+        execute(); // start turn, but does not wait until complete
         ahead(moveDistance);
         break;
       case m_actionBackLeft:
         setTurnLeft(rotationDegrees);
+        execute(); // start turn, but does not wait until complete
         back(moveDistance);
         break;
       case m_actionBackRight:
         setTurnRight(rotationDegrees);
+        execute(); // start turn, but does not wait until complete
         back(moveDistance);
         break;
       default:
