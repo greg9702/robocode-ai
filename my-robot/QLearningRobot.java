@@ -67,7 +67,7 @@ public class QLearningRobot extends AdvancedRobot
 
   public QLearningRobot()
   {
-    //System.out.println("Constructor called");
+    logger.debug("QLearningRobot constructor called.");
   }
 
   /**
@@ -94,7 +94,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void reset()
   {
-    System.out.println("init() invoked.");
+    logger.debug("reset() invoked.");
     m_cumulativeReward = 0;
 
     int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
@@ -117,11 +117,12 @@ public class QLearningRobot extends AdvancedRobot
     if (USE_FRESH_QTABLE == false) {
       File dumpFile = getDataFile(QTABLE_FILENAME);
       try {
+        logger.debug("Loading QTable state.");
         m_qtable = QTable.load(dumpFile);
         return;
       } catch (Exception e) {
-        System.out.println("[Error] Unable to load QTable:" + e);
-        System.out.println("Fallback to fresh QTable instance.");
+        logger.error("Unable to load QTable: " + e);
+        logger.error("Fallback to fresh QTable instance.");
       }
     }
     m_qtable = new QTable(m_actions);
@@ -132,12 +133,13 @@ public class QLearningRobot extends AdvancedRobot
    */
   private void saveQTable()
   {
+    logger.debug("Saving QTable state.");
     File dumpFile = getDataFile(QTABLE_FILENAME);
     try {
       RobocodeFileOutputStream fstream = new RobocodeFileOutputStream(dumpFile);
       m_qtable.save(fstream);
     } catch (Exception e) {
-      System.out.println("[Error] Unable to save QTable: " + e);
+      logger.error("Unable to save QTable: " + e);
     }
   }
 
@@ -146,7 +148,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void run()
   {
-    //System.out.println("run() invoked.");
+    logger.debug("run() invoked.");
     if (initialized == false) {
       init();
       initialized = true;
@@ -228,8 +230,9 @@ public class QLearningRobot extends AdvancedRobot
   public void onRoundEnded(RoundEndedEvent e)
   {
     loggerRewards.debug(m_cumulativeReward);
-    System.out.println("Round finished. Cumulative reward: " + m_cumulativeReward + ".");
-    System.out.println("States explored: " + m_qtable.getNumberOfExploredStates());
+    logger.debug("Round finished.");
+    logger.debug("Cumulative reward of round: " + m_cumulativeReward);
+    logger.debug("States explored in this round: " + m_qtable.getNumberOfExploredStates());
     saveQTable();
   }
 
@@ -238,7 +241,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onBattleEnded(BattleEndedEvent e)
   {
-    System.out.println("Battle finished.");
+    logger.debug("Battle finished.");
   }
 
   /**
@@ -310,7 +313,7 @@ public class QLearningRobot extends AdvancedRobot
     } else if (wallDistances[3] == minDistance) {
       angleDiff = 180 - currentAngle;
     } else {
-      System.out.println("ERROR: Unknown wall collision!");
+      logger.error("Unknown wall collision!");
     }
     if (angleDiff > 180) {
       turnLeft(angleDiff  - 180);
@@ -327,7 +330,7 @@ public class QLearningRobot extends AdvancedRobot
   public void onStatus(StatusEvent e)
   {
     if (m_currentState == null) {
-      System.out.println("Init not called yet. Skipping onStatus.");
+      logger.info("Init not called yet. Skipping onStatus.");
       return;
     }
     RobotStatus s = e.getStatus();
@@ -384,7 +387,7 @@ public class QLearningRobot extends AdvancedRobot
         back(moveDistance);
         break;
       default:
-        System.out.println("Error: Unknown action!");
+        logger.error("Unknown action!");
     }
     // TODO consider using turnGun[Left/Right]
 
