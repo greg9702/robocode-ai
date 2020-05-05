@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 pushd . > /dev/null
 SCRIPT_PATH="${BASH_SOURCE[0]}"
@@ -14,7 +15,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 export CLASSPATH=/usr/lib/jvm/java-8-openjdk/lib
 
 echo "Compiling robot..."
-javac -classpath ${SCRIPT_PATH}/robocode/libs/robocode.jar ${SCRIPT_PATH}/my-robot/*.java
+javac -classpath ${SCRIPT_PATH}/robocode/libs/robocode.jar:${SCRIPT_PATH}/log4j/log4j-api-2.13.2.jar:${SCRIPT_PATH}/log4j/log4j-core-2.13.2.jar ${SCRIPT_PATH}/my-robot/*.java
 
 echo "Copying robot..."
 mkdir -p ${SCRIPT_PATH}/robocode/robots/iwium

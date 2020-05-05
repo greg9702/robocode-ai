@@ -6,8 +6,8 @@
 
 == Setup
 
-. Install robocode into _robocode_ directory.
+. Install __robocode__ into _robocode_ directory.
 
-. Execute _./compile.sh_.
+. Install __log4j__ into _log4j_ directory.
 
-. Create new battle with QLearning robot.
+. Execute _./compile.sh_, then _./run.sh_.

@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.io.*;
 import java.util.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 // API help : https://robocode.sourceforge.io/docs/robocode/robocode/Robot.html
 
 /**
@@ -12,6 +15,8 @@ import java.util.*;
  */
 public class QLearningRobot extends AdvancedRobot
 {
+  private static final Logger logger = LogManager.getLogger("QLearningRobot");
+
   // whether to use fresh QTable instead of loading from file
   final boolean USE_FRESH_QTABLE = false;
 
@@ -23,9 +28,6 @@ public class QLearningRobot extends AdvancedRobot
   private QTable m_qtable;
   private State m_currentState;
 
-  // learning params
-  private double m_epsilon = 1.0; // experiment rate
-
   // QLearning environment params
   String m_robotXPosParamName = "m_robotXPosParamName";
   int m_robotXPos_bins = 8;
@@ -35,6 +37,9 @@ public class QLearningRobot extends AdvancedRobot
   int m_absAngleToEnemy_bins = 4;
   String m_distanceToEnemyParamName = "m_distanceToEnemyParamName";
   int m_distanceToEnemy_bins = 4;
+
+  // temporary store to remember things across many actions
+  Double m_lastAbsAngleToEnemy = null;
 
   // QLearning environment actions
   private ArrayList<Action> m_actions;
@@ -46,16 +51,42 @@ public class QLearningRobot extends AdvancedRobot
 
   // rewards
   private double m_hitRobotReward = -2;
-  private double m_bulletHitReward = 3;
-  private double m_hitByBulletReward = -3;
+  private double m_bulletHitReward = 30;
+  private double m_hitByBulletReward = -20;
   private double m_bulletMissedReward = 0;
-  private double m_hitWallReward = -3.5;
+  private double m_hitWallReward = -3;
+
+  int loops = 0;
+
+  // whether initialization was completed
+  boolean initialized = false;
+
+  public QLearningRobot()
+  {
+    //System.out.println("Constructor called");
+  }
+
+  /**
+   * Initializes all necessary things like QTable.
+   */
+  public void init()
+  {
+    logger.debug("init() called");
+    m_actions = new ArrayList<Action>();
+    m_actions.add(new Action(0, m_actionFire2));
+    m_actions.add(new Action(1, m_actionFrontLeft));
+    m_actions.add(new Action(2, m_actionFrontRight));
+    m_actions.add(new Action(3, m_actionBackLeft));
+    m_actions.add(new Action(4, m_actionBackRight));
+
+    initQTable();
+  }
 
   /**
    * We have to use custom init method called imediatelly after run(),
    * because in constructor we cannot call a lot of robocode method.
    */
-  public void init()
+  public void reset()
   {
     System.out.println("init() invoked.");
     m_cumulativeReward = 0;
@@ -68,15 +99,6 @@ public class QLearningRobot extends AdvancedRobot
       new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins)
     )));
 
-    m_actions = new ArrayList<Action>();
-    m_actions.add(new Action(0, m_actionFire2));
-    m_actions.add(new Action(1, m_actionFrontLeft));
-    m_actions.add(new Action(2, m_actionFrontRight));
-    m_actions.add(new Action(3, m_actionBackLeft));
-    m_actions.add(new Action(4, m_actionBackRight));
-
-    initQTable();
-
     return;
   }
 
@@ -86,7 +108,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   private void initQTable()
   {
-    if (USE_FRESH_QTABLE != false) {
+    if (USE_FRESH_QTABLE == false) {
       File dumpFile = getDataFile(QTABLE_FILENAME);
       try {
         m_qtable = QTable.load(dumpFile);
@@ -118,8 +140,12 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void run()
   {
-    System.out.println("run() invoked.");
-    init();
+    //System.out.println("run() invoked.");
+    if (initialized == false) {
+      init();
+      initialized = true;
+    }
+    reset();
 
     // Initialization of the robot should be put here
     setColors(Color.green, Color.black, Color.black); // body,gun,radar
@@ -127,10 +153,14 @@ public class QLearningRobot extends AdvancedRobot
     // Robot main loop
     while (true) {
 
+      // Run simple scan
+      turnGunRight(360);
+
       State stateBeforeAction = new State(m_currentState);
       Action action;
       Random rand = new Random();
-      if (m_epsilon > rand.nextDouble()) {
+      double epsilon = getEpsilon();
+      if (epsilon > rand.nextDouble()) {
         // pick random action
         int actionIndex = rand.nextInt(m_actions.size());
         action = m_actions.get(actionIndex);
@@ -138,6 +168,11 @@ public class QLearningRobot extends AdvancedRobot
         // pick best action
         action = m_qtable.findBestAction(m_currentState);
       }
+
+      // If we already picked action then we can clear dynamic params,
+      // so they won't be reused in next steps
+      m_currentState.updateParam(m_distanceToEnemyParamName, null);
+      m_currentState.updateParam(m_absAngleToEnemyParamName, null);
 
       // Reset reward and execute
       m_reward = 0;
@@ -152,7 +187,7 @@ public class QLearningRobot extends AdvancedRobot
       m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
       m_cumulativeReward += m_reward;
 
-      saveQTable();
+      loops += 1;
     }
   }
 
@@ -165,8 +200,9 @@ public class QLearningRobot extends AdvancedRobot
     m_currentState.updateParam(m_distanceToEnemyParamName, enemyDistance);
 
     double bearing = e.getBearing();
-    double absBearing = bearing + 180;
+    double absBearing = bearing;
     m_currentState.updateParam(m_absAngleToEnemyParamName, absBearing);
+    m_lastAbsAngleToEnemy = absBearing; // tmp store, for future usage
 
     //fire(1/2/3) // we want AI learn to fire by itself
 
@@ -178,8 +214,9 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onRoundEnded(RoundEndedEvent e)
   {
-    System.out.println("Cumulative reward: " + m_cumulativeReward + ".");
-    System.out.println("Round finished.");
+    System.out.println("Round finished. Cumulative reward: " + m_cumulativeReward + ".");
+    System.out.println("States explored: " + m_qtable.getNumberOfExploredStates());
+    saveQTable();
   }
 
   /**
@@ -245,25 +282,21 @@ public class QLearningRobot extends AdvancedRobot
     // distances to walls: left, bottom, right, top
     double[] wallDistances = {xPos, yPos, fieldWidth-xPos, fieldHeight-yPos};
     double minDistance = Arrays.stream(wallDistances).min().getAsDouble();
-    int wallCase = Arrays.asList(wallDistances).indexOf(minDistance);
     double angleDiff = 0;
-    switch (wallCase) {
-      case 0: // left
-        angleDiff = currentAngle - 270;
-        break;
-      case 1: // bottom
-        angleDiff = currentAngle - 180;
-        break;
-      case 2: // right
-        angleDiff = currentAngle - 90;
-        break;
-      case 3: // top
-        angleDiff = currentAngle - 0;
-        break;
-      default:
+    // diffs to opposite direction
+    if (wallDistances[0] == minDistance) {
+      angleDiff = 90 - currentAngle;
+    } else if (wallDistances[1] == minDistance) {
+      angleDiff = 0 - currentAngle;
+    } else if (wallDistances[2] == minDistance) {
+      angleDiff = 270 - currentAngle;
+    } else if (wallDistances[3] == minDistance) {
+      angleDiff = 180 - currentAngle;
+    } else {
+      System.out.println("ERROR: Unknown wall collision!");
     }
-    if (angleDiff >= 0) {
-      turnLeft(angleDiff);
+    if (angleDiff > 180) {
+      turnLeft(angleDiff  - 180);
     } else {
       turnRight(angleDiff);
     }
@@ -301,23 +334,32 @@ public class QLearningRobot extends AdvancedRobot
     String name = action.getName();
     switch (name) {
       case m_actionFire2:
-        // TODO consider turning gun toward enemy
+        Double enemyAngle = m_lastAbsAngleToEnemy;
+        // Little help, point gun toward enemy
+        if (enemyAngle != null) {
+          turnGunRight(enemyAngle);
+        }
+        // Shoot!
         fire(firePower);
+        // Restore gun position
+        if (enemyAngle != null) {
+          turnGunLeft(enemyAngle);
+        }
         break;
       case m_actionFrontLeft:
-        turnLeft(rotationDegrees);
+        setTurnLeft(rotationDegrees);
         ahead(moveDistance);
         break;
       case m_actionFrontRight:
-        turnRight(rotationDegrees);
+        setTurnRight(rotationDegrees);
         ahead(moveDistance);
         break;
       case m_actionBackLeft:
-        turnLeft(rotationDegrees);
+        setTurnLeft(rotationDegrees);
         back(moveDistance);
         break;
       case m_actionBackRight:
-        turnRight(rotationDegrees);
+        setTurnRight(rotationDegrees);
         back(moveDistance);
         break;
       default:
@@ -326,6 +368,19 @@ public class QLearningRobot extends AdvancedRobot
     // TODO consider using turnGun[Left/Right]
 
     return;
+  }
+
+  /**
+   * Gets experiment rate.
+   * @return double
+   */
+  private double getEpsilon()
+  {
+    int adaDivisor = 1000;
+    double min = 0.1;
+    double max = 1;
+    double value = Math.max(min, Math.min(max, max - Math.log10(loops / adaDivisor)));
+    return value;
   }
 
 }  // class QLearningRobot

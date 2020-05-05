@@ -106,4 +106,14 @@ public class QTable implements Serializable
     return key;
   }
 
+  /**
+   * Gets number of already explored states.
+   * @return int
+   */
+  public int getNumberOfExploredStates()
+  {
+    int exploredStates = m_values.keySet().size();
+    return exploredStates;
+  }
+
 }  // class QTable

@@ -57,11 +57,11 @@ public class Param implements Serializable
 
   /**
    * Sets new param value.
-   * @param double
+   * @param Double
    */
-  public void setNewValue(double val)
+  public void setNewValue(Double val)
   {
-    m_value = new Double(val);
+    m_value = val;
     return;
   }
 

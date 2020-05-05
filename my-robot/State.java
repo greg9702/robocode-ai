@@ -45,10 +45,10 @@ public class State implements Serializable
   /**
    * Updates parameter by name.
    * @param String paramName
-   * @param double value
+   * @param Double value
    * @param bool whther update was successful
    */
-  public boolean updateParam(String paramName, double value)
+  public boolean updateParam(String paramName, Double value)
   {
     for (Param p: m_params) {
       if (p.getName().equals(paramName)) {
@@ -90,5 +90,15 @@ public class State implements Serializable
       key += ",";
     }
     return key;
+  }
+
+  /**
+   * UNSAFE method! Gets param array.
+   * Used in test suite to check references.
+   * @return ArrayList<Param>
+   */
+  public ArrayList<Param> getParams()
+  {
+    return m_params;
   }
 };
