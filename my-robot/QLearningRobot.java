@@ -1,6 +1,7 @@
 package iwium;
 
 import robocode.*;
+import robocode.util.*;
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
@@ -152,14 +153,19 @@ public class QLearningRobot extends AdvancedRobot
     }
     reset();
 
+    // Make sure radar is moving independently
+    setAdjustGunForRobotTurn(false);
+    setAdjustRadarForGunTurn(true);
+
     // Initialization of the robot should be put here
     setColors(Color.green, Color.black, Color.black); // body,gun,radar
 
+    // Run radar scan as fast as possible - this is our first action
+    setTurnRadarRight(Double.POSITIVE_INFINITY);
+    execute();
+
     // Robot main loop
     while (true) {
-
-      // Run simple scan
-      turnGunRight(360);
 
       State stateBeforeAction = new State(m_currentState);
       Action action;
@@ -181,9 +187,7 @@ public class QLearningRobot extends AdvancedRobot
 
       // Reset reward and execute
       m_reward = 0;
-      //turnGunRight(360); // ???
       performAction(action);
-      //turnGunRight(360); // ???
 
       // TODO consider adding difference between our and enemy
       // energy levels to reward.
@@ -202,6 +206,9 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onScannedRobot(ScannedRobotEvent e)
   {
+    // Simple, but effective radar lock
+    setTurnRadarRight(2.0 * Utils.normalRelativeAngleDegrees(getHeading() + e.getBearing() - getRadarHeading()));
+
     double enemyDistance = e.getDistance();
     m_currentState.updateParam(m_distanceToEnemyParamName, enemyDistance);
 
@@ -272,6 +279,9 @@ public class QLearningRobot extends AdvancedRobot
   public void onHitWall(HitWallEvent e) {
     m_reward += m_hitWallReward;
     bounceFromWall(150);
+    // Rerun radar scanning
+    setTurnRadarRight(Double.POSITIVE_INFINITY);
+    execute();
     return;
   }
 
