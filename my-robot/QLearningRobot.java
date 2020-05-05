@@ -56,6 +56,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_hitByBulletReward = -20;
   private double m_bulletMissedReward = 0;
   private double m_hitWallReward = -3;
+  private double m_aliveReward = 1;
 
   int loops = 0;
 
@@ -185,6 +186,7 @@ public class QLearningRobot extends AdvancedRobot
       // energy levels to reward.
 
       // Update rewards
+      m_reward += m_aliveReward;
       m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
       m_cumulativeReward += m_reward;
 
