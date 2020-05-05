@@ -6,8 +6,8 @@ set -e
 #################
 
 ENABLE_DISPLAY=0
-ROUNDS=100
-
+TRAIN_ROUNDS=10000
+TEST_ROUNDS=1000
 
 ########
 # core #
@@ -33,13 +33,14 @@ JVM_ARGS=""
 JVM_ARGS="${JVM_ARGS} -Xmx1024m"
 JVM_ARGS="${JVM_ARGS} -DNOSECURITY=true"
 JVM_ARGS="${JVM_ARGS} -Dlog4j.configurationFile=${SCRIPT_PATH}/log4j2.xml -DlogPath=${SCRIPT_PATH}/logs"
-
+JVM_ARGS="${JVM_ARGS} -DtrainRounds=${TRAIN_ROUNDS}"
 # Robocode arguments
 
 ROBOCODE_ARGS=""
 
 BATTLE_PATH=$(mktemp --suffix .battle)
-printf "robocode.battle.numRounds=${ROUNDS}\n" >> ${BATTLE_PATH}
+ROUNDS_NUM=$(($TRAIN_ROUNDS + $TEST_ROUNDS))
+printf "robocode.battle.numRounds=${ROUNDS_NUM}\n" >> ${BATTLE_PATH}
 printf "robocode.battle.selectedRobots=iwium.QLearningRobot*,sample.SpinBot\n" >> ${BATTLE_PATH}
 ROBOCODE_ARGS="${ROBOCODE_ARGS} -battle ${BATTLE_PATH}"
 

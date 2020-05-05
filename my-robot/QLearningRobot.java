@@ -28,6 +28,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_reward;
   private QTable m_qtable;
   private State m_currentState;
+  private int m_learningRounds;
 
   // QLearning environment params
   String m_robotXPosParamName = "m_robotXPosParamName";
@@ -80,6 +81,8 @@ public class QLearningRobot extends AdvancedRobot
     m_actions.add(new Action(2, m_actionFrontRight));
     m_actions.add(new Action(3, m_actionBackLeft));
     m_actions.add(new Action(4, m_actionBackRight));
+
+    m_learningRounds = Integer.parseInt(System.getProperty("trainRounds"));
 
     initQTable();
   }
@@ -384,11 +387,16 @@ public class QLearningRobot extends AdvancedRobot
    */
   private double getEpsilon()
   {
-    int adaDivisor = 1000;
+    /*int adaDivisor = 1000;
     double min = 0.1;
     double max = 1;
     double value = Math.max(min, Math.min(max, max - Math.log10(loops / adaDivisor)));
-    return value;
+    return value;*/
+    // Firstly explore, then switch to optimal policy
+    if (getRoundNum() < m_learningRounds) {
+      return 1;
+    }
+    return 0;
   }
 
 }  // class QLearningRobot
