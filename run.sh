@@ -24,8 +24,15 @@ cd `dirname ${SCRIPT_PATH}` > /dev/null
 SCRIPT_PATH=`pwd`;
 popd  > /dev/null
 
+# clean old files
+rm -f ${SCRIPT_PATH}/logs/*
+rm -f ${SCRIPT_PATH}/robocode/robots/iwium/QLearningRobot.data/qtable.bin
+
 # JVM arguments
-JVM_ARGS="-Xmx1024m -DNOSECURITY=true -Dlog4j.configurationFile=${SCRIPT_PATH}/log4j2.xml"
+JVM_ARGS=""
+JVM_ARGS="${JVM_ARGS} -Xmx1024m"
+JVM_ARGS="${JVM_ARGS} -DNOSECURITY=true"
+JVM_ARGS="${JVM_ARGS} -Dlog4j.configurationFile=${SCRIPT_PATH}/log4j2.xml -DlogPath=${SCRIPT_PATH}/logs"
 
 # Robocode arguments
 
@@ -51,4 +58,4 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # results #
 ###########
 
-# gnuplot -p -e 'plot "/tmp/tes"'
+gnuplot -p -e "plot '${SCRIPT_PATH}/logs/rewards.txt'"

@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
   <Appenders>
-    <File name="MyFile" fileName="/tmp/xd">
+    <File name="All" fileName="${sys:logPath}/full_log.txt">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <File name="Base" fileName="${sys:logPath}/logs.txt">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <File name="Rewards" fileName="${sys:logPath}/rewards.txt">
+      <PatternLayout pattern="%msg%n"/>
     </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
-      <AppenderRef ref="MyFile"/>
+      <AppenderRef ref="All"/>
     </Root>
+    <Logger name="base">
+      <AppenderRef ref="Base"/>
+    </Logger>
+    <Logger name="rewards">
+      <AppenderRef ref="Rewards"/>
+    </Logger>
   </Loggers>
 </Configuration>
