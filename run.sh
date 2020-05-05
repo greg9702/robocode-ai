@@ -30,7 +30,7 @@ rm -f ${SCRIPT_PATH}/robocode/robots/iwium/QLearningRobot.data/qtable.bin
 
 # JVM arguments
 JVM_ARGS=""
-JVM_ARGS="${JVM_ARGS} -Xmx1024m"
+JVM_ARGS="${JVM_ARGS} -Xmx10G"
 JVM_ARGS="${JVM_ARGS} -DNOSECURITY=true"
 JVM_ARGS="${JVM_ARGS} -Dlog4j.configurationFile=${SCRIPT_PATH}/log4j2.xml -DlogPath=${SCRIPT_PATH}/logs"
 JVM_ARGS="${JVM_ARGS} -DtrainRounds=${TRAIN_ROUNDS}"

@@ -53,11 +53,11 @@ public class QLearningRobot extends AdvancedRobot
   private static final String m_actionBackRight = "backRight";
 
   // rewards
-  private double m_hitRobotReward = -2;
+  private double m_hitRobotReward = -10;
   private double m_bulletHitReward = 30;
-  private double m_hitByBulletReward = -20;
+  private double m_hitByBulletReward = -50;
   private double m_bulletMissedReward = 0;
-  private double m_hitWallReward = -3;
+  private double m_hitWallReward = -6;
   private double m_aliveReward = 1;
 
   int loops = 0;

@@ -14,8 +14,8 @@ public class QTable implements Serializable
   // list of possible actions
   private ArrayList<Action> m_actions;
 
-  private double m_alpha = 1.0; // learning rate
-  private double m_gamma = 0.9; // discount factor
+  private double m_alpha = 0.2; // learning rate
+  private double m_gamma = 0.92; // discount factor
 
   public QTable(ArrayList<Action> actions)
   {
