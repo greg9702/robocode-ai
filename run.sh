@@ -5,6 +5,7 @@ set -e
 # user settings #
 #################
 
+FRESH_QTABLE=0
 ENABLE_DISPLAY=0
 TRAIN_ROUNDS=10000
 TEST_ROUNDS=1000
@@ -26,7 +27,9 @@ popd  > /dev/null
 
 # clean old files
 rm -f ${SCRIPT_PATH}/logs/*
-rm -f ${SCRIPT_PATH}/robocode/robots/iwium/QLearningRobot.data/qtable.bin
+if [[ $FRESH_QTABLE -eq "1" ]]; then
+  rm -f ${SCRIPT_PATH}/robocode/robots/iwium/QLearningRobot.data/qtable.bin
+fi
 
 # JVM arguments
 JVM_ARGS=""
