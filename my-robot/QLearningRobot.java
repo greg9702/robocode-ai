@@ -53,8 +53,10 @@ public class QLearningRobot extends AdvancedRobot
   // QLearning environment actions
   private static ArrayList<Action> m_actions;
   private static final String m_actionFire2 = "fire2";
+  private static final String m_actionFront = "front";
   private static final String m_actionFrontLeft = "frontLeft";
   private static final String m_actionFrontRight = "frontRight";
+  private static final String m_actionBack = "back";
   private static final String m_actionBackLeft = "backLeft";
   private static final String m_actionBackRight = "backRight";
 
@@ -85,10 +87,13 @@ public class QLearningRobot extends AdvancedRobot
     logger.debug("init() called");
     m_actions = new ArrayList<Action>();
     m_actions.add(new Action(0, m_actionFire2));
-    m_actions.add(new Action(1, m_actionFrontLeft));
-    m_actions.add(new Action(2, m_actionFrontRight));
-    m_actions.add(new Action(3, m_actionBackLeft));
-    m_actions.add(new Action(4, m_actionBackRight));
+    m_actions.add(new Action(1, m_actionFront));
+    m_actions.add(new Action(2, m_actionFrontLeft));
+    m_actions.add(new Action(3, m_actionFrontRight));
+    m_actions.add(new Action(4, m_actionBack));
+    m_actions.add(new Action(5, m_actionBackRight));
+    m_actions.add(new Action(6, m_actionBackRight));
+
 
     m_learningRounds = Integer.parseInt(System.getProperty("trainRounds"));
 
@@ -378,6 +383,9 @@ public class QLearningRobot extends AdvancedRobot
           turnGunLeft(enemyAngle);
         }
         break;
+      case m_actionFront:
+        ahead(moveDistance);
+        break;
       case m_actionFrontLeft:
         setTurnLeft(rotationDegrees);
         execute(); // start turn, but does not wait until complete
@@ -396,6 +404,9 @@ public class QLearningRobot extends AdvancedRobot
       case m_actionBackRight:
         setTurnRight(rotationDegrees);
         execute(); // start turn, but does not wait until complete
+        back(moveDistance);
+        break;
+      case m_actionBack:
         back(moveDistance);
         break;
       default:
