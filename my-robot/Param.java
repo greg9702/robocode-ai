@@ -92,7 +92,7 @@ public class Param implements Serializable
     if (m_value == null) {
       key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + "NULL";
     } else {
-      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + m_value;
+      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + getQuantizedValue();
     }
     return key;
   }
