@@ -35,17 +35,17 @@ public class QLearningRobot extends AdvancedRobot
 
   // QLearning environment params
   String m_robotXPosParamName = "m_robotXPosParamName";
-  int m_robotXPos_bins = 8;
+  int m_robotXPos_bins = 16;
   String m_robotYPosParamName = "m_robotYPosParamName";
-  int m_robotYPos_bins = 6;
+  int m_robotYPos_bins = 12;
   String m_robotHeadingParamName = "m_robotHeadingParamName";
   int m_robotHeadingParamName_bins = 16;
   String m_robotGunHeadingParamName = "m_robotGunHeadingParamName";
   int m_robotGunHeadingParamName_bins = 12;
   String m_absAngleToEnemyParamName = "m_absAngleToEnemyParamName";
-  int m_absAngleToEnemy_bins = 4;
+  int m_absAngleToEnemy_bins = 12;
   String m_distanceToEnemyParamName = "m_distanceToEnemyParamName";
-  int m_distanceToEnemy_bins = 4;
+  int m_distanceToEnemy_bins = 12;
 
   // temporary store to remember things across many actions
   Double m_lastAbsAngleToEnemy = null;
@@ -364,7 +364,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   private void performAction(Action action)
   {
-    double moveDistance = 150;
+    double moveDistance = 100;
     double firePower = 2;
     double rotationDegrees = 60;
 
