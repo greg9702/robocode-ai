@@ -62,10 +62,9 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # results #
 ###########
 
-gnuplot -p -e "plot '${SCRIPT_PATH}/logs/rewards.txt'"
-gnuplot -p -e "plot '${SCRIPT_PATH}/logs/states.txt'"
-gnuplot -p -e "plot '${SCRIPT_PATH}/logs/energy.txt'"
 (
-  cd ${SCRIPT_PATH}
-  python utils/states_hist.py
+  cd ${SCRIPT_PATH}/utils
+  pipenv run python states_hist.py
+  pipenv run python plot_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
+  pipenv run python win_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
 )

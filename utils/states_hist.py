@@ -16,7 +16,7 @@ def pretty(d, indent=0):
 print('\n### DETAILS OF EXPLORED STATES ###\n')
 stats = {}
 
-with open("./logs/table.txt", "r") as f:
+with open("../logs/table.txt", "r") as f:
   lines = f.read().split('\n')[1:-1]
 
   for line in lines:
