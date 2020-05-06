@@ -28,9 +28,10 @@ public class QLearningRobot extends AdvancedRobot
 
   private double m_cumulativeReward;
   private double m_reward;
-  private QTable m_qtable;
   private State m_currentState;
-  private int m_learningRounds;
+
+  private static QTable m_qtable;
+  private static int m_learningRounds;
 
   // QLearning environment params
   String m_robotXPosParamName = "m_robotXPosParamName";
@@ -46,7 +47,7 @@ public class QLearningRobot extends AdvancedRobot
   Double m_lastAbsAngleToEnemy = null;
 
   // QLearning environment actions
-  private ArrayList<Action> m_actions;
+  private static ArrayList<Action> m_actions;
   private static final String m_actionFire2 = "fire2";
   private static final String m_actionFrontLeft = "frontLeft";
   private static final String m_actionFrontRight = "frontRight";
@@ -63,8 +64,8 @@ public class QLearningRobot extends AdvancedRobot
 
   int loops = 0;
 
-  // whether initialization was completed
-  boolean initialized = false;
+  // whether first time initialization was completed
+  static boolean initialized = false;
 
   public QLearningRobot()
   {
@@ -73,6 +74,7 @@ public class QLearningRobot extends AdvancedRobot
 
   /**
    * Initializes all necessary things like QTable.
+   * It should be called only once in the whole battle!
    */
   public void init()
   {
@@ -90,12 +92,12 @@ public class QLearningRobot extends AdvancedRobot
   }
 
   /**
-   * We have to use custom init method called imediatelly after run(),
-   * because in constructor we cannot call a lot of robocode method.
+   * We have to use custom reset environment imediatelly after run().
+   * Note: in constructor we cannot call a lot of robocode method.
    */
-  public void reset()
+  public void resetEnvironment()
   {
-    logger.debug("reset() invoked.");
+    logger.debug("resetEnvironment() invoked.");
     m_cumulativeReward = 0;
 
     int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
@@ -154,7 +156,7 @@ public class QLearningRobot extends AdvancedRobot
       init();
       initialized = true;
     }
-    reset();
+    resetEnvironment();
 
     // Make sure radar is moving independently
     setAdjustGunForRobotTurn(false);
@@ -233,9 +235,6 @@ public class QLearningRobot extends AdvancedRobot
     loggerRewards.debug(m_cumulativeReward);
     loggerStates.debug(m_qtable.getNumberOfExploredStates());
     logger.debug("Round finished.");
-    logger.debug("Cumulative reward of round: " + m_cumulativeReward);
-    logger.debug("States explored in this round: " + m_qtable.getNumberOfExploredStates());
-    saveQTable();
   }
 
   /**
@@ -244,6 +243,7 @@ public class QLearningRobot extends AdvancedRobot
   public void onBattleEnded(BattleEndedEvent e)
   {
     logger.debug("Battle finished.");
+    saveQTable();
   }
 
   /**
