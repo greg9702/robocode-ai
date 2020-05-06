@@ -5,10 +5,10 @@ set -e
 # user settings #
 #################
 
-FRESH_QTABLE=0
+FRESH_QTABLE=1
 ENABLE_DISPLAY=0
-TRAIN_ROUNDS=10000
-TEST_ROUNDS=1000
+TRAIN_ROUNDS=150000
+TEST_ROUNDS=50000
 
 ########
 # core #
