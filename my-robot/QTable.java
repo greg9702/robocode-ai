@@ -6,8 +6,13 @@ import java.io.*;
 import java.util.*;
 import java.io.Serializable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class QTable implements Serializable
 {
+  private static final Logger logger = LogManager.getLogger("table");
+
   // values that describe game profit of performing action in given state
   private HashMap<String, Double> m_values;
 
@@ -29,6 +34,10 @@ public class QTable implements Serializable
    */
   public void save(RobocodeFileOutputStream fout) throws IOException
   {
+    logger.debug("Map keys: " + m_values.keySet().size() + ", size: " + m_values.size());
+    for (String key : m_values.keySet()) {
+      logger.debug(key + ": " + m_values.get(key));
+    }
     ObjectOutputStream oos = new ObjectOutputStream(fout);
     oos.writeObject(this);
     oos.close();

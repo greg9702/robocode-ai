@@ -13,6 +13,9 @@
     <File name="States" fileName="${sys:logPath}/states.txt">
       <PatternLayout pattern="%msg%n"/>
     </File>
+    <File name="Table" fileName="${sys:logPath}/table.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
@@ -26,6 +29,9 @@
     </Logger>
     <Logger name="states">
       <AppenderRef ref="States"/>
+    </Logger>
+    <Logger name="table">
+      <AppenderRef ref="Table"/>
     </Logger>
   </Loggers>
 </Configuration>
