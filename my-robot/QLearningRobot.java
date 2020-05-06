@@ -38,6 +38,10 @@ public class QLearningRobot extends AdvancedRobot
   int m_robotXPos_bins = 8;
   String m_robotYPosParamName = "m_robotYPosParamName";
   int m_robotYPos_bins = 6;
+  String m_robotHeadingParamName = "m_robotHeadingParamName";
+  int m_robotHeadingParamName_bins = 16;
+  String m_robotGunHeadingParamName = "m_robotGunHeadingParamName";
+  int m_robotGunHeadingParamName_bins = 12;
   String m_absAngleToEnemyParamName = "m_absAngleToEnemyParamName";
   int m_absAngleToEnemy_bins = 4;
   String m_distanceToEnemyParamName = "m_distanceToEnemyParamName";
@@ -104,6 +108,8 @@ public class QLearningRobot extends AdvancedRobot
     m_currentState = new State(new ArrayList<>(Arrays.asList(
       new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
       new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
+      new Param(m_robotHeadingParamName, 0, 360, m_robotHeadingParamName_bins),
+      new Param(m_robotGunHeadingParamName, 0, 360, m_robotGunHeadingParamName_bins),
       new Param(m_absAngleToEnemyParamName, 0, 360, m_absAngleToEnemy_bins),
       new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins)
     )));
@@ -338,8 +344,12 @@ public class QLearningRobot extends AdvancedRobot
     RobotStatus s = e.getStatus();
     double xPos = s.getX();
     double yPos = s.getY();
+    double heading = s.getHeading();
+    double gunHeading = s.getGunHeading();
     m_currentState.updateParam(m_robotXPosParamName, xPos);
     m_currentState.updateParam(m_robotYPosParamName, yPos);
+    m_currentState.updateParam(m_robotHeadingParamName, heading);
+    m_currentState.updateParam(m_robotGunHeadingParamName, gunHeading);
     return;
   }
 
