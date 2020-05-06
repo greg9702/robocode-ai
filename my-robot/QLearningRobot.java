@@ -18,6 +18,7 @@ public class QLearningRobot extends AdvancedRobot
 {
   private static final Logger logger = LogManager.getLogger("base");
   private static final Logger loggerRewards = LogManager.getLogger("rewards");
+  private static final Logger loggerStates = LogManager.getLogger("states");
 
   // whether to use fresh QTable instead of loading from file
   final boolean USE_FRESH_QTABLE = false;
@@ -230,6 +231,7 @@ public class QLearningRobot extends AdvancedRobot
   public void onRoundEnded(RoundEndedEvent e)
   {
     loggerRewards.debug(m_cumulativeReward);
+    loggerStates.debug(m_qtable.getNumberOfExploredStates());
     logger.debug("Round finished.");
     logger.debug("Cumulative reward of round: " + m_cumulativeReward);
     logger.debug("States explored in this round: " + m_qtable.getNumberOfExploredStates());

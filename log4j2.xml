@@ -10,6 +10,9 @@
     <File name="Rewards" fileName="${sys:logPath}/rewards.txt">
       <PatternLayout pattern="%msg%n"/>
     </File>
+    <File name="States" fileName="${sys:logPath}/states.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
@@ -20,6 +23,9 @@
     </Logger>
     <Logger name="rewards">
       <AppenderRef ref="Rewards"/>
+    </Logger>
+    <Logger name="states">
+      <AppenderRef ref="States"/>
     </Logger>
   </Loggers>
 </Configuration>

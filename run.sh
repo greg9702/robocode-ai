@@ -60,3 +60,4 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 ###########
 
 gnuplot -p -e "plot '${SCRIPT_PATH}/logs/rewards.txt'"
+gnuplot -p -e "plot '${SCRIPT_PATH}/logs/states.txt'"
