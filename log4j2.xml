@@ -16,6 +16,9 @@
     <File name="Table" fileName="${sys:logPath}/table.txt">
       <PatternLayout pattern="%msg%n"/>
     </File>
+    <File name="Energy" fileName="${sys:logPath}/energy.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
@@ -32,6 +35,9 @@
     </Logger>
     <Logger name="table">
       <AppenderRef ref="Table"/>
+    </Logger>
+    <Logger name="energy">
+      <AppenderRef ref="Energy"/>
     </Logger>
   </Loggers>
 </Configuration>

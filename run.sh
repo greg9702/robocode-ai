@@ -64,6 +64,7 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 
 gnuplot -p -e "plot '${SCRIPT_PATH}/logs/rewards.txt'"
 gnuplot -p -e "plot '${SCRIPT_PATH}/logs/states.txt'"
+gnuplot -p -e "plot '${SCRIPT_PATH}/logs/energy.txt'"
 (
   cd ${SCRIPT_PATH}
   python utils/states_hist.py
