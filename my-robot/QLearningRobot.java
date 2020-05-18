@@ -69,7 +69,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_hitWallReward = -6;
   private double m_aliveReward = 1;
 
-  int loops = 0;
+  private static int loops = 0;
 
   // whether first time initialization was completed
   static boolean initialized = false;
@@ -156,6 +156,7 @@ public class QLearningRobot extends AdvancedRobot
     } catch (Exception e) {
       logger.error("Unable to save QTable: " + e);
     }
+    logger.info("QTable saved!");
   }
 
   /**
