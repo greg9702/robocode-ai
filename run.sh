@@ -5,10 +5,17 @@ set -e
 # user settings #
 #################
 
-FRESH_QTABLE=1
-ENABLE_DISPLAY=0
-TRAIN_ROUNDS=150000
-TEST_ROUNDS=50000
+if [ "$#" -ne 4 ]; then
+  echo "Illegal number of parameters."
+  echo
+  echo "Usage: $0 <fresh_qtable=0/1> <train_rounds> <test_rounds> <enable_display=0/1>"
+  echo "Example: $0 1 10000 500 0"
+  exit 1
+fi
+FRESH_QTABLE="$1"
+TRAIN_ROUNDS="$2"
+TEST_ROUNDS="$3"
+ENABLE_DISPLAY="$4"
 
 ########
 # core #
