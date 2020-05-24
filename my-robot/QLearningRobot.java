@@ -32,7 +32,12 @@ public class QLearningRobot extends AdvancedRobot
   private State m_currentState;
 
   private static QTable m_qtable;
+
+  // provided from env
   private static int m_learningRounds;
+  private static double m_alphaDivisor;
+  private static double m_minAlpha;
+  private static double m_gamma;
 
   // QLearning environment params
   String m_robotXPosParamName = "m_robotXPosParamName";
@@ -69,7 +74,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_hitWallReward = -6;
   private double m_aliveReward = 1;
 
-  private static int loops = 0;
+  private static long loops = 0;
 
   // whether first time initialization was completed
   static boolean initialized = false;
@@ -95,8 +100,10 @@ public class QLearningRobot extends AdvancedRobot
     m_actions.add(new Action(5, m_actionBackRight));
     m_actions.add(new Action(6, m_actionBackRight));
 
-
     m_learningRounds = Integer.parseInt(System.getProperty("trainRounds"));
+    m_alphaDivisor = Double.parseDouble(System.getProperty("alphaDivisor"));
+    m_minAlpha = Double.parseDouble(System.getProperty("minAlpha"));
+    m_gamma = Double.parseDouble(System.getProperty("gamma"));
 
     initQTable();
   }
@@ -140,7 +147,7 @@ public class QLearningRobot extends AdvancedRobot
         logger.error("Fallback to fresh QTable instance.");
       }
     }
-    m_qtable = new QTable(m_actions);
+    m_qtable = new QTable(m_actions, m_alphaDivisor, m_minAlpha, m_gamma);
   }
 
   /**
@@ -216,6 +223,7 @@ public class QLearningRobot extends AdvancedRobot
       m_cumulativeReward += m_reward;
 
       loops += 1;
+      m_qtable.updateRates(loops);
     }
   }
 

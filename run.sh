@@ -5,17 +5,20 @@ set -e
 # user settings #
 #################
 
-if [ "$#" -ne 4 ]; then
+if [ "$#" -ne 7 ]; then
   echo "Illegal number of parameters."
   echo
-  echo "Usage: $0 <fresh_qtable=0/1> <train_rounds> <test_rounds> <enable_display=0/1>"
-  echo "Example: $0 1 10000 500 0"
+  echo "Usage: $0 <fresh_qtable=0/1> <train_rounds> <test_rounds> <alpha_divisor> <min_alpha> <gamma> <enable_display=0/1>"
+  echo "Example: $0 1 10000 500 222 0.1 0.9 0"
   exit 1
 fi
 FRESH_QTABLE="$1"
 TRAIN_ROUNDS="$2"
 TEST_ROUNDS="$3"
-ENABLE_DISPLAY="$4"
+ALPHA_DIVISOR="$4"
+MIN_ALPHA="$5"
+GAMMA="$6"
+ENABLE_DISPLAY="$7"
 
 ########
 # core #
@@ -44,6 +47,10 @@ JVM_ARGS="${JVM_ARGS} -Xmx10G"
 JVM_ARGS="${JVM_ARGS} -DNOSECURITY=true"
 JVM_ARGS="${JVM_ARGS} -Dlog4j.configurationFile=${SCRIPT_PATH}/log4j2.xml -DlogPath=${SCRIPT_PATH}/logs"
 JVM_ARGS="${JVM_ARGS} -DtrainRounds=${TRAIN_ROUNDS}"
+JVM_ARGS="${JVM_ARGS} -DalphaDivisor=${ALPHA_DIVISOR}"
+JVM_ARGS="${JVM_ARGS} -DminAlpha=${MIN_ALPHA}"
+JVM_ARGS="${JVM_ARGS} -Dgamma=${GAMMA}"
+
 # Robocode arguments
 
 ROBOCODE_ARGS=""

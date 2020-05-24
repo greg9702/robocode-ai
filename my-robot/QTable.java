@@ -19,13 +19,20 @@ public class QTable implements Serializable
   // list of possible actions
   private ArrayList<Action> m_actions;
 
-  private double m_alpha = 0.2; // learning rate
-  private double m_gamma = 0.92; // discount factor
+  private double m_alphaDivisor; // learning rate - log divisor
+  private double m_minAlpha; // learning rate - log divisor
 
-  public QTable(ArrayList<Action> actions)
+  // internal state
+  private double m_alpha = 1.0; // learning rate (always start at 1.0)
+  private double m_gamma; // discount factor
+
+  public QTable(ArrayList<Action> actions, double alphaDivisor, double minAlpha, double gamma)
   {
     m_values = new HashMap<String,Double>();
     m_actions = actions;
+    m_alphaDivisor = alphaDivisor;
+    m_minAlpha = minAlpha;
+    m_gamma = gamma;
   }
 
   /**
@@ -123,6 +130,19 @@ public class QTable implements Serializable
   {
     int exploredStates = m_values.keySet().size();
     return exploredStates;
+  }
+
+  /**
+   * Updates learning rate.
+   * @param long loops
+   * @return double
+   */
+  public double updateRates(long loops)
+  {
+    double min = m_minAlpha;
+    double max = 1.0;
+    double value = Math.max(min, Math.min(max, max - Math.log10(loops / m_alphaDivisor)));
+    return value;
   }
 
 }  // class QTable
