@@ -314,7 +314,7 @@ public class QLearningRobot extends AdvancedRobot
    */
   public void onHitWall(HitWallEvent e) {
     m_reward += m_hitWallReward;
-    bounceFromWall(150);
+    bounceFromWall(100);
     // Rerun radar scanning
     setTurnRadarRight(Double.POSITIVE_INFINITY);
     execute();
