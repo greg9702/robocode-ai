@@ -31,7 +31,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_reward;
   private State m_currentState;
 
-  private static QTable m_qtable;
+  private static QTable m_qtable = null;
 
   // provided from env
   private static int m_learningRounds;
@@ -106,8 +106,6 @@ public class QLearningRobot extends AdvancedRobot
     m_alphaDivisor = Double.parseDouble(System.getProperty("alphaDivisor"));
     m_minAlpha = Double.parseDouble(System.getProperty("minAlpha"));
     m_gamma = Double.parseDouble(System.getProperty("gamma"));
-
-    initQTable();
   }
 
   /**
@@ -129,27 +127,36 @@ public class QLearningRobot extends AdvancedRobot
       new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins)
     )));
 
+    initQTable();
+
     return;
   }
 
   /**
    * Initializes QTable, either by loading dump
-   * or creating fresh instance (depending on settings).
+   * or using fresh instance (depending on settings).
    */
   private void initQTable()
   {
+    // Prevent multiple initializations
+    if (m_qtable != null) {
+      return;
+    }
+
+    int numStates = m_currentState.getNumStates();
+    m_qtable = new QTable(m_actions, numStates, m_alphaDivisor, m_minAlpha, m_gamma);
+
     if (USE_FRESH_QTABLE == false) {
       File dumpFile = getDataFile(QTABLE_FILENAME);
       try {
         logger.debug("Loading QTable state.");
-        m_qtable = QTable.load(dumpFile);
-        return;
+        m_qtable.loadValues(dumpFile);
       } catch (Exception e) {
         logger.error("Unable to load QTable: " + e);
-        logger.error("Fallback to fresh QTable instance.");
+        logger.error("Fresh QTable will be used instead.");
       }
     }
-    m_qtable = new QTable(m_actions, m_alphaDivisor, m_minAlpha, m_gamma);
+    return;
   }
 
   /**
@@ -204,7 +211,7 @@ public class QLearningRobot extends AdvancedRobot
         action = m_actions.get(actionIndex);
       } else {
         // pick best action
-        action = m_qtable.findBestAction(m_currentState);
+        action = m_qtable.bestAction(m_currentState);
       }
 
       // If we already picked action then we can clear dynamic params,

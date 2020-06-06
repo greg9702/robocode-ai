@@ -3,7 +3,7 @@ package iwium;
 import java.lang.Math;
 import java.io.Serializable;
 
-public class Param implements Serializable
+public class Param
 {
   private String m_name;
   private double m_min;
@@ -69,8 +69,12 @@ public class Param implements Serializable
    * Quantizes param value.
    * @return int
    */
-  public int getQuantizedValue()
+  public int getQuantizedValue() throws RobotException
   {
+    if (m_value == null) {
+      throw new RobotException("Unable to get value of empty parameter.");
+    }
+
     // if we place buckets on X axis, starting with 0, then we can find where our value is among buckets
     //  eg. 0.5 -> means it is in the center
     double value_place_among_buckets = (m_value - m_min) / (m_max - m_min);
@@ -83,17 +87,11 @@ public class Param implements Serializable
   }
 
   /**
-   * Constructs String that may be used to create hashmap key.
-   * @return String
+   * Gets number of buckets for current param.
+   * @return int
    */
-  public String getStringKey()
+  public int getNumBuckets()
   {
-    String key;
-    if (m_value == null) {
-      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + "NULL";
-    } else {
-      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + getQuantizedValue();
-    }
-    return key;
+    return m_buckets;
   }
 }

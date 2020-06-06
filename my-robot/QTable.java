@@ -4,17 +4,18 @@ import robocode.*;
 
 import java.io.*;
 import java.util.*;
-import java.io.Serializable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class QTable implements Serializable
+public class QTable
 {
   private static final Logger logger = LogManager.getLogger("table");
 
   // values that describe game profit of performing action in given state
-  private HashMap<String, Double> m_values;
+  //   rows -> states
+  //   cols -> actions
+  private double m_values[][];
 
   // list of possible actions
   private ArrayList<Action> m_actions;
@@ -23,16 +24,35 @@ public class QTable implements Serializable
   private double m_minAlpha; // learning rate - log divisor
 
   // internal state
-  private double m_alpha = 1.0; // learning rate (always start at 1.0)
-  private double m_gamma; // discount factor
+  public double m_alpha = 1.0; // learning rate (always start at 1.0)
+  public double m_gamma; // discount factor
 
-  public QTable(ArrayList<Action> actions, double alphaDivisor, double minAlpha, double gamma)
+  private int m_numStates;
+
+  // 100 means range: <-50, 50>
+  // 0 means that all values will be filled with 0s.
+  private final int initializationRange = 100;
+
+  public QTable(ArrayList<Action> actions, int numStates, double alphaDivisor, double minAlpha, double gamma)
   {
-    m_values = new HashMap<String,Double>();
+    m_numStates = numStates;
+    m_values = new double[numStates][actions.size()];
     m_actions = actions;
     m_alphaDivisor = alphaDivisor;
     m_minAlpha = minAlpha;
     m_gamma = gamma;
+
+    initialize();
+  }
+
+  public void initialize() {
+    for (int i = 0; i < m_numStates; i++) {
+      for (int j = 0; j < m_actions.size(); j++) {
+        m_values[i][j] = (Math.random() - 0.5) * initializationRange;
+      }
+    }
+    logger.error(m_numStates);
+    return;
   }
 
   /**
@@ -41,26 +61,49 @@ public class QTable implements Serializable
    */
   public void save(RobocodeFileOutputStream fout) throws IOException
   {
-    logger.debug("Map keys: " + m_values.keySet().size() + ", size: " + m_values.size());
-    for (String key : m_values.keySet()) {
-      logger.debug(key + ": " + m_values.get(key));
+    PrintStream w = null;
+
+    w = new PrintStream(fout);
+    w.println(m_numStates);
+    w.println(m_actions.size());
+    for (int i = 0; i < m_numStates; i++) {
+      for (int j = 0; j < m_actions.size(); j++)
+      {
+        w.print(m_values[i][j]);
+        w.print(" ");
+      }
+      w.print("\n");
     }
-    ObjectOutputStream oos = new ObjectOutputStream(fout);
-    oos.writeObject(this);
-    oos.close();
+
+    if (w.checkError()) {
+      logger.error("Could not save the data to file!");
+    }
+    w.close();
   }
 
   /**
-   * Loads serialized QTable from file.
+   * Loads QTable values from file.
+   * Note: hyperparams are not preserved.
    * @param File
    */
-  public static QTable load(File f) throws FileNotFoundException, IOException, ClassNotFoundException
+  public void loadValues(File f) throws FileNotFoundException, IOException
   {
-    FileInputStream fi = new FileInputStream(f);
-    ObjectInputStream ois = new ObjectInputStream(fi);
-    QTable table = (QTable) ois.readObject();
-    ois.close();
-    return table;
+    BufferedReader r = new BufferedReader(new FileReader(f));
+
+    int numStates = Integer.parseInt(r.readLine());
+    int numActions = Integer.parseInt(r.readLine());
+    if (numStates != m_numStates || numActions != m_actions.size()) {
+      throw new IOException("Incompatible size of QTable");
+    }
+
+    for (int i = 0; i < numStates; i++) {
+      String[] actionsVals = r.readLine().split(" ");
+      for (int j = 0; j < numActions; j++) {
+        m_values[i][j] = Double.parseDouble(actionsVals[j]);
+      }
+    }
+
+    return;
   }
 
   /**
@@ -72,67 +115,48 @@ public class QTable implements Serializable
    */
   public void updateRewards(State s_old, Action a, double reward, State s_new)
   {
-    String key = makeHashmapKey(s_old, a);
-    // init key if not exists
-    if (m_values.containsKey(key) == false) {
-      m_values.put(key, new Double(0));
-    }
+    double Q1 = getQ(s_old, a);
+    Action bestNewAction = bestAction(s_new);
+    double maxQ = getQ(s_new, bestNewAction);
 
-    Action bestAction = findBestAction(s_new);
-    String keyNew = makeHashmapKey(s_new, bestAction);
-    double new_state_value = m_values.getOrDefault(keyNew, 0.0);
-
-    double current_value = m_values.get(key);
-    double new_value = current_value + m_alpha * (reward + m_gamma * new_state_value - current_value);
-    m_values.put(key, new Double(new_value));
+    double updatedQ = Q1 + m_alpha * (reward + m_gamma * maxQ - Q1);
+    setQ(s_old, a, updatedQ);
 
     return;
+  }
+
+  double getQ(State state, Action a)
+  {
+    int stateId = state.getRowId();
+    int actionId = m_actions.indexOf(a);
+    return m_values[stateId][actionId];
+  }
+
+  void setQ(State state, Action a, double Q)
+  {
+    int stateId = state.getRowId();
+    int actionId = m_actions.indexOf(a);
+    m_values[stateId][actionId] = Q;
   }
 
   /**
    * Finds best known action for given state.
    * @param State state
    */
-  public Action findBestAction(State state)
+  Action bestAction(State state)
   {
-    Action bestAction = null;
-    Double bestValue = null;
-    for (Action a: m_actions) {
-      String key = makeHashmapKey(state, a);
-      Double value = m_values.get(key);
-      // skip unexplored states
-      if (value == null) {
-        continue;
-      }
-      // set new max
-      if (bestValue == null || value > bestValue) {
-        bestAction = a;
+    Action bestAction = m_actions.get(0);
+    Double bestValue = getQ(state, bestAction);
+
+    for (Action action: m_actions) {
+      double value = getQ(state, action);
+      if (value > bestValue) {
+        bestAction = action;
         bestValue = value;
       }
     }
 
-    // no actions explored for this state -> fallback to random one as best
-    if (bestAction == null) {
-      Random rand = new Random();
-      int actionIndex = rand.nextInt(m_actions.size());
-      bestAction = m_actions.get(actionIndex);
-    }
-
     return bestAction;
-  }
-
-  /**
-   * Creates reproducable key for hashmap using objects.
-   * @param State s
-   * @param Action a
-   */
-  private String makeHashmapKey(State s, Action a)
-  {
-    String key = "";
-    key += s.getStringKey();
-    key += ";";
-    key += a.getStringKey();
-    return key;
   }
 
   /**
@@ -141,8 +165,8 @@ public class QTable implements Serializable
    */
   public int getNumberOfExploredStates()
   {
-    int exploredStates = m_values.keySet().size();
-    return exploredStates;
+    // not implemented yet...
+    return 0;
   }
 
   /**

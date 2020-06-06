@@ -1,8 +1,6 @@
 package iwium;
 
-import java.io.Serializable;
-
-public class Action implements Serializable
+public class Action
 {
   private int m_id;
   private String m_name;
@@ -21,15 +19,5 @@ public class Action implements Serializable
   {
     String name = m_name;
     return name;
-  }
-
-  /**
-   * Constructs String that may be used to create hashmap key.
-   * @return String
-   */
-  public String getStringKey()
-  {
-    String key = m_id + "," + m_name;
-    return key;
   }
 };

@@ -8,8 +8,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class State implements Serializable
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+public class State
 {
+  private static final Logger logger = LogManager.getLogger("base");
+
   private ArrayList<Param> m_params;
 
   public State(ArrayList<Param> params)
@@ -78,21 +83,6 @@ public class State implements Serializable
   }
 
   /**
-   * Constructs String that may be used to create hashmap key.
-   * @return String
-   */
-  public String getStringKey()
-  {
-    String key = "";
-    // params are already sorted in constructor
-    for (Param p : m_params) {
-      key += p.getStringKey();
-      key += ",";
-    }
-    return key;
-  }
-
-  /**
    * UNSAFE method! Gets param array.
    * Used in test suite to check references.
    * @return ArrayList<Param>
@@ -100,5 +90,41 @@ public class State implements Serializable
   public ArrayList<Param> getParams()
   {
     return m_params;
+  }
+
+  /**
+   * Converts current state to QTable row ID.
+   * @return int
+   */
+  public int getRowId()
+  {
+    int rowId = 0;
+    int totalMultiplicator = 1;
+    for (Param p: m_params) {
+      try {
+        rowId += p.getQuantizedValue() * totalMultiplicator;
+        logger.error("adding " + p.getQuantizedValue() + "*" + totalMultiplicator );
+        logger.error(p.getName());
+      } catch (RobotException e) {
+        logger.error("Unable to get param value: not set!");
+      }
+
+      totalMultiplicator *= p.getNumBuckets();
+    }
+    return rowId;
+  }
+
+  /**
+   * Gets number of total possible states.
+   * @return int
+   */
+  public int getNumStates()
+  {
+    int totalStates = 1; // we use 1 because we perform multiplication
+    for (Param p: m_params) {
+      int states = p.getNumBuckets();
+      totalStates *= states;
+    }
+    return totalStates;
   }
 };
