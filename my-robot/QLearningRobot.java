@@ -398,10 +398,6 @@ public class QLearningRobot extends AdvancedRobot
         }
         // Shoot!
         fire(firePower);
-        // Restore gun position
-        if (enemyAngle != null) {
-          turnGunLeft(enemyAngle);
-        }
         break;
       case m_actionFront:
         ahead(moveDistance);
