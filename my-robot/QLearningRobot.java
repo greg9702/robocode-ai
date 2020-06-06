@@ -220,7 +220,7 @@ public class QLearningRobot extends AdvancedRobot
       // energy levels to reward.
 
       // Update rewards
-      m_reward += m_aliveReward;
+      m_reward += m_aliveReward; // around 40 times per round
       m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
       m_cumulativeReward += m_reward;
 
