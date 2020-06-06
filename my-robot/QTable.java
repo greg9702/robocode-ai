@@ -96,15 +96,28 @@ public class QTable implements Serializable
   public Action findBestAction(State state)
   {
     Action bestAction = null;
-    double bestValue = 0;
+    Double bestValue = null;
     for (Action a: m_actions) {
       String key = makeHashmapKey(state, a);
-      double value = m_values.getOrDefault(key, 0.0);
-      if (bestAction == null || value > bestValue) {
+      Double value = m_values.get(key);
+      // skip unexplored states
+      if (value == null) {
+        continue;
+      }
+      // set new max
+      if (bestValue == null || value > bestValue) {
         bestAction = a;
         bestValue = value;
       }
     }
+
+    // no actions explored for this state -> fallback to random one as best
+    if (bestAction == null) {
+      Random rand = new Random();
+      int actionIndex = rand.nextInt(m_actions.size());
+      bestAction = m_actions.get(actionIndex);
+    }
+
     return bestAction;
   }
 
