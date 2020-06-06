@@ -79,6 +79,8 @@ public class QLearningRobot extends AdvancedRobot
   // whether first time initialization was completed
   static boolean initialized = false;
 
+  boolean waitingForQAction = false;
+
   public QLearningRobot()
   {
     logger.debug("QLearningRobot constructor called.");
@@ -178,8 +180,8 @@ public class QLearningRobot extends AdvancedRobot
     }
     resetEnvironment();
 
-    // Make sure radar is moving independently
-    setAdjustGunForRobotTurn(false);
+    // Make sure radar and gun are moving independently
+    setAdjustGunForRobotTurn(true);
     setAdjustRadarForGunTurn(true);
 
     // Initialization of the robot should be put here
@@ -224,6 +226,8 @@ public class QLearningRobot extends AdvancedRobot
 
       loops += 1;
       m_qtable.updateRates(loops);
+
+      waitingForQAction = false;
     }
   }
 
@@ -243,7 +247,12 @@ public class QLearningRobot extends AdvancedRobot
     m_currentState.updateParam(m_absAngleToEnemyParamName, absBearing);
     m_lastAbsAngleToEnemy = absBearing; // tmp store, for future usage
 
-    //fire(1/2/3) // we want AI learn to fire by itself
+    if (waitingForQAction == false) {
+      // Turn gun toward enemy
+      setTurnGunRight(Utils.normalRelativeAngleDegrees(getHeading() + e.getBearing() - getGunHeading()));
+    }
+
+    waitingForQAction = true;
 
     return;
   }
