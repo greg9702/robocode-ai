@@ -1,6 +1,9 @@
 import json
+import os
 
-def pretty(d, indent=0):
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
+
+def prettyPrint(d, indent=0):
   for key, value in d.items():
     if indent == 0:
       print(key)
@@ -8,7 +11,7 @@ def pretty(d, indent=0):
     else:
       print(str(key).rjust(13, ' ') + ': ', end='')
     if isinstance(value, dict):
-      pretty(value, indent+1)
+      prettyPrint(value, indent+1)
       print('')
     else:
       print(value)
@@ -16,7 +19,7 @@ def pretty(d, indent=0):
 print('\n### DETAILS OF EXPLORED STATES ###\n')
 stats = {}
 
-with open("../logs/table.txt", "r") as f:
+with open(SCRIPT_PATH + "/../logs/table.txt", "r") as f:
   lines = f.read().split('\n')[1:-1]
 
   for line in lines:
@@ -57,4 +60,4 @@ with open("../logs/table.txt", "r") as f:
         stats[name]["occurences"][int(value_q)] += 1
       stats[name]['TOTAL'] += 1
 
-print(pretty(stats))
+prettyPrint(stats)

@@ -94,4 +94,21 @@ public class Param
   {
     return m_buckets;
   }
+
+  /**
+   * Constructs String that may be used to create hashmap key.
+   * @return String
+   * Note: used only for script BC
+   */
+  public String getStringKey()
+  {
+    String key;
+    try {
+      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + getQuantizedValue();
+    } catch (RobotException e) {
+      key = m_name + "," + m_min + "," + m_max + "," + m_buckets + "," + "NULL";
+    }
+    return key;
+  }
+
 }

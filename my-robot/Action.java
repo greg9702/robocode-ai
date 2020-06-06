@@ -20,4 +20,16 @@ public class Action
     String name = m_name;
     return name;
   }
+
+  /**
+   * Constructs String that may be used to create hashmap key.
+   * @return String
+   * Note: used only for script BC
+   */
+  public String getStringKey()
+  {
+    String key = m_id + "," + m_name;
+    return key;
+  }
+
 };

@@ -10,7 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 public class QTable
 {
-  private static final Logger logger = LogManager.getLogger("table");
+  private static final Logger logger = LogManager.getLogger("base");
+  private static final Logger loggerTable = LogManager.getLogger("table");
 
   // values that describe game profit of performing action in given state
   //   rows -> states
@@ -20,6 +21,9 @@ public class QTable
   // additional array to store visits count of each states/actions
   private int m_valuesVisits[][];
   private int m_uniqueVisits = 0;
+
+  // reduntant container, used only for compatibility with states_hist.py script
+  private HashMap<String, Double> m_valuesV2;
 
   // list of possible actions
   private ArrayList<Action> m_actions;
@@ -43,6 +47,7 @@ public class QTable
     m_values = new double[numStates][actions.size()];
     m_valuesVisits = new int[numStates][actions.size()];
     m_uniqueVisits = 0;
+    m_valuesV2 = new HashMap<String,Double>();
     m_actions = actions;
     m_alphaDivisor = alphaDivisor;
     m_minAlpha = minAlpha;
@@ -58,7 +63,6 @@ public class QTable
         m_valuesVisits[i][j] = 0;
       }
     }
-    logger.error(m_numStates);
     return;
   }
 
@@ -68,8 +72,13 @@ public class QTable
    */
   public void save(RobocodeFileOutputStream fout) throws IOException
   {
-    PrintStream w = null;
+    // BC logging of states distribution
+    for (String key : m_valuesV2.keySet()) {
+      loggerTable.debug(key + ": " + m_valuesV2.get(key));
+    }
 
+    // save table
+    PrintStream w = null;
     w = new PrintStream(fout);
     w.println(m_numStates);
     w.println(m_actions.size());
@@ -127,6 +136,13 @@ public class QTable
 
     double updatedQ = Q1 + m_alpha * (reward + m_gamma * maxQ - Q1);
     setQ(s_old, a, updatedQ);
+
+    // only for script compatibility
+    String key = "";
+    key += s_old.getStringKey();
+    key += ";";
+    key += a.getStringKey();
+    m_valuesV2.put(key, new Double(updatedQ));
 
     return;
   }

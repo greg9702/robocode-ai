@@ -125,4 +125,19 @@ public class State
     }
     return totalStates;
   }
+
+  /**
+   * Constructs String that may be used to create hashmap key.
+   * @return String
+   */
+  public String getStringKey()
+  {
+    String key = "";
+    // params are already sorted in constructor
+    for (Param p : m_params) {
+      key += p.getStringKey();
+      key += ",";
+    }
+    return key;
+  }
 };
