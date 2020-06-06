@@ -17,6 +17,10 @@ public class QTable
   //   cols -> actions
   private double m_values[][];
 
+  // additional array to store visits count of each states/actions
+  private int m_valuesVisits[][];
+  private int m_uniqueVisits = 0;
+
   // list of possible actions
   private ArrayList<Action> m_actions;
 
@@ -37,6 +41,8 @@ public class QTable
   {
     m_numStates = numStates;
     m_values = new double[numStates][actions.size()];
+    m_valuesVisits = new int[numStates][actions.size()];
+    m_uniqueVisits = 0;
     m_actions = actions;
     m_alphaDivisor = alphaDivisor;
     m_minAlpha = minAlpha;
@@ -49,6 +55,7 @@ public class QTable
     for (int i = 0; i < m_numStates; i++) {
       for (int j = 0; j < m_actions.size(); j++) {
         m_values[i][j] = (Math.random() - 0.5) * initializationRange;
+        m_valuesVisits[i][j] = 0;
       }
     }
     logger.error(m_numStates);
@@ -74,7 +81,6 @@ public class QTable
       }
       w.print("\n");
     }
-
     if (w.checkError()) {
       logger.error("Could not save the data to file!");
     }
@@ -137,6 +143,14 @@ public class QTable
     int stateId = state.getRowId();
     int actionId = m_actions.indexOf(a);
     m_values[stateId][actionId] = Q;
+
+    // save visit
+    if (m_valuesVisits[stateId][actionId] == 0) {
+      m_uniqueVisits += 1;
+    }
+    m_valuesVisits[stateId][actionId] += 1;
+
+    return;
   }
 
   /**
@@ -165,8 +179,7 @@ public class QTable
    */
   public int getNumberOfExploredStates()
   {
-    // not implemented yet...
-    return 0;
+    return m_uniqueVisits;
   }
 
   /**
