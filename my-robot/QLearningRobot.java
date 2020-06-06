@@ -105,7 +105,7 @@ public class QLearningRobot extends AdvancedRobot
     m_actions.add(new Action(6, m_actionBackRight));
 
     m_learningRounds = Integer.parseInt(System.getProperty("trainRounds"));
-    m_testingRounds = Integer.parseInt(System.getProperty("trainRounds"));
+    m_testingRounds = Integer.parseInt(System.getProperty("testRounds"));
     m_alphaDivisor = Double.parseDouble(System.getProperty("alphaDivisor"));
     m_minAlpha = Double.parseDouble(System.getProperty("minAlpha"));
     m_gamma = Double.parseDouble(System.getProperty("gamma"));
