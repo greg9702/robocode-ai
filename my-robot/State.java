@@ -103,8 +103,6 @@ public class State
     for (Param p: m_params) {
       try {
         rowId += p.getQuantizedValue() * totalMultiplicator;
-        logger.error("adding " + p.getQuantizedValue() + "*" + totalMultiplicator );
-        logger.error(p.getName());
       } catch (RobotException e) {
         logger.error("Unable to get param value: not set!");
       }
