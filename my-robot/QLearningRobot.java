@@ -20,6 +20,7 @@ public class QLearningRobot extends AdvancedRobot
   private static final Logger loggerRewards = LogManager.getLogger("rewards");
   private static final Logger loggerStates = LogManager.getLogger("states");
   private static final Logger loggerEnergy = LogManager.getLogger("energy");
+  private static final Logger loggerEnv = LogManager.getLogger("environment");
 
   // whether to use fresh QTable instead of loading from file
   final boolean USE_FRESH_QTABLE = false;
@@ -35,6 +36,7 @@ public class QLearningRobot extends AdvancedRobot
 
   // provided from env
   private static int m_learningRounds;
+  private static int m_testingRounds;
   private static double m_alphaDivisor;
   private static double m_minAlpha;
   private static double m_gamma;
@@ -103,9 +105,14 @@ public class QLearningRobot extends AdvancedRobot
     m_actions.add(new Action(6, m_actionBackRight));
 
     m_learningRounds = Integer.parseInt(System.getProperty("trainRounds"));
+    m_testingRounds = Integer.parseInt(System.getProperty("trainRounds"));
     m_alphaDivisor = Double.parseDouble(System.getProperty("alphaDivisor"));
     m_minAlpha = Double.parseDouble(System.getProperty("minAlpha"));
     m_gamma = Double.parseDouble(System.getProperty("gamma"));
+
+    // save ENV configuration
+    loggerEnv.info(m_learningRounds);
+    loggerEnv.info(m_testingRounds);
   }
 
   /**

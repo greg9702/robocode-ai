@@ -1,6 +1,9 @@
 import pandas as pd
 import argparse
 import sys
+import os
+
+SCRIPT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 def str2bool(v):
     if isinstance(v, bool):
@@ -13,23 +16,28 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 parser = argparse.ArgumentParser(description='Prints winning statistics of logs')
-parser.add_argument('num_learning_rounds', type=int,
-                    help='number of learning rounds')
-parser.add_argument('num_testing_rounds', type=int,
-                    help='number of testing rounds')
 parser.add_argument("--pretty", type=str2bool, nargs='?',
                         const=True, default=True,
                         help="Pretty output mode")
 
 args = parser.parse_args()
 
-train_rounds = args.num_learning_rounds
-test_rounds = args.num_testing_rounds
-
 if args.pretty:
   print('\n### ROBOT WINS ###\n')
 
-df = pd.read_csv('../logs/energy.txt', sep=",", header=None)
+train_rounds = 0
+test_rounds = 0
+
+with open(SCRIPT_PATH + '/../logs/env.txt') as f:
+  env = f.read().split('\n')
+  train_rounds = int(env[0])
+  test_rounds = int(env[1])
+
+if args.pretty:
+  print('Learning rounds:', train_rounds)
+  print('Testing rounds:', test_rounds, '\n')
+
+df = pd.read_csv(SCRIPT_PATH + '/../logs/energy.txt', sep=",", header=None)
 df.columns = ["val"]
 
 train_df = df[:train_rounds]

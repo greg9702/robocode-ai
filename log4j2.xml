@@ -19,6 +19,9 @@
     <File name="Energy" fileName="${sys:logPath}/energy.txt">
       <PatternLayout pattern="%msg%n"/>
     </File>
+    <File name="Environment" fileName="${sys:logPath}/env.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
@@ -38,6 +41,9 @@
     </Logger>
     <Logger name="energy">
       <AppenderRef ref="Energy"/>
+    </Logger>
+    <Logger name="environment">
+      <AppenderRef ref="Environment"/>
     </Logger>
   </Loggers>
 </Configuration>

@@ -50,8 +50,7 @@ for min_alpha in min_alphas:
             xd = pr.stdout
 
             # Get win stats
-            pr = subprocess.run(["python", "./win_stats.py", "--pretty", "False",
-                                str(LEARNING_ROUNDS), str(TESTING_ROUNDS)], capture_output=True)
+            pr = subprocess.run(["python", "./win_stats.py", "--pretty", "False"], capture_output=True)
             if pr.returncode != 0:
               raise Exception('Error while running win_stats:', pr.stdout, pr.stderr)
             wins = pr.stdout.split(b'\n')
