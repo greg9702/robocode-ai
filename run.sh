@@ -59,7 +59,7 @@ BATTLE_PATH=$(mktemp --suffix .battle)
 ROUNDS_NUM=$(($TRAIN_ROUNDS + $TEST_ROUNDS))
 printf "robocode.battle.numRounds=${ROUNDS_NUM}\n" >> ${BATTLE_PATH}
 printf "robocode.battle.selectedRobots=iwium.QLearningRobot*,sample.SpinBot\n" >> ${BATTLE_PATH}
-printf "robocode.battle.initialPositions=(224,240,60)" >> ${BATTLE_PATH}
+#printf "robocode.battle.initialPositions=(224,240,60)" >> ${BATTLE_PATH}
 ROBOCODE_ARGS="${ROBOCODE_ARGS} -battle ${BATTLE_PATH}"
 
 if [[ $ENABLE_DISPLAY -eq "0" ]]; then
