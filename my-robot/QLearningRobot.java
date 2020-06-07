@@ -22,6 +22,7 @@ public class QLearningRobot extends AdvancedRobot
   private static final Logger loggerStates = LogManager.getLogger("states");
   private static final Logger loggerEnergy = LogManager.getLogger("energy");
   private static final Logger loggerEnv = LogManager.getLogger("environment");
+  private static final Logger loggerHyperparams = LogManager.getLogger("hyperparams");
 
   // whether to use fresh QTable instead of loading from file
   final boolean USE_FRESH_QTABLE = false;
@@ -136,6 +137,9 @@ public class QLearningRobot extends AdvancedRobot
     )));
 
     initQTable();
+
+    // log round params
+    loggerHyperparams.info(m_qtable.m_alpha + "|" + getEpsilon() + "|" + m_qtable.m_gamma);
 
     return;
   }

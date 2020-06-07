@@ -22,6 +22,9 @@
     <File name="Environment" fileName="${sys:logPath}/env.txt">
       <PatternLayout pattern="%msg%n"/>
     </File>
+    <File name="Hyperparams" fileName="${sys:logPath}/hyperparams.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
@@ -44,6 +47,9 @@
     </Logger>
     <Logger name="environment">
       <AppenderRef ref="Environment"/>
+    </Logger>
+    <Logger name="hyperparams">
+      <AppenderRef ref="Hyperparams"/>
     </Logger>
   </Loggers>
 </Configuration>
