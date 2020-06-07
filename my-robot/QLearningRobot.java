@@ -128,8 +128,8 @@ public class QLearningRobot extends AdvancedRobot
 
     int maxDistance = (int)Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
     m_currentState = new State(new ArrayList<>(Arrays.asList(
-      new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
-      new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
+      // new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
+      // new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
       new Param(m_robotHeadingParamName, 0, 360, m_robotHeadingParamName_bins),
       new Param(m_robotGunHeadingParamName, 0, 360, m_robotGunHeadingParamName_bins),
       new Param(m_absAngleToEnemyParamName, 0, 360, m_absAngleToEnemy_bins),
@@ -230,8 +230,8 @@ public class QLearningRobot extends AdvancedRobot
 
       // If we already picked action then we can clear dynamic params,
       // so they won't be reused in next steps
-      m_currentState.updateParam(m_distanceToEnemyParamName, null);
-      m_currentState.updateParam(m_absAngleToEnemyParamName, null);
+      // m_currentState.updateParam(m_distanceToEnemyParamName, null);
+      // m_currentState.updateParam(m_absAngleToEnemyParamName, null);
 
       // Reset reward and execute
       m_reward = 0;

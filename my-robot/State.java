@@ -104,7 +104,7 @@ public class State
       try {
         rowId += p.getQuantizedValue() * totalMultiplicator;
       } catch (RobotException e) {
-        logger.error("Unable to get param value: not set!");
+        logger.error("Unable to get param " + p.getName() + ": not set!");
       }
 
       totalMultiplicator *= p.getNumBuckets();

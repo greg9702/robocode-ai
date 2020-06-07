@@ -6,16 +6,16 @@ import numpy as np
 import math
 import subprocess
 
-LEARNING_ROUNDS = 100
-TESTING_ROUNDS = 100
+LEARNING_ROUNDS = 1000
+TESTING_ROUNDS = 1000
 
-REPEAT_TIMES = 3
+REPEAT_TIMES = 5
 
 # Grid of params
-min_alphas = [0.1, 0.2, 0.3] #, 0.5, 0.7]
+min_alphas = [0.1, 0.2, 0.3, 0.5, 0.7]
 min_epsilons = [-99999] # unused
 gammas = [1, 0.9, 0.6, 0.3, 0.15]
-learn_divisors = [300, 800, 1000, 5000, 10000]
+learn_divisors = [50, 300, 800, 1000, 5000, 10000]
 # learn_divisors = [10000, 20000, 40000, 80000]
 explore_divisors = [-9999] #unused
 
