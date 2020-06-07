@@ -200,13 +200,13 @@ public class QTable
 
   /**
    * Updates learning rate.
-   * @param long battles
+   * @param long rounds
    */
-  public void updateRates(long battles)
+  public void updateRates(long rounds)
   {
     double min = m_minAlpha;
     double max = 1.0;
-    double value = Math.max(min, Math.min(max, max - Math.log10((double)battles / m_alphaDivisor)));
+    double value = Math.max(min, Math.min(max, max - Math.log10((double)rounds / m_alphaDivisor)));
     m_alpha = value;
     return;
   }

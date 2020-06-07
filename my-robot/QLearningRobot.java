@@ -5,6 +5,7 @@ import robocode.util.*;
 import java.awt.Color;
 import java.io.*;
 import java.util.*;
+import java.lang.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,7 +77,7 @@ public class QLearningRobot extends AdvancedRobot
   private double m_hitWallReward = -6;
   private double m_aliveReward = 1;
 
-  private static long loops = 0;
+  private static int m_currentRound = 0;
 
   // whether first time initialization was completed
   static boolean initialized = false;
@@ -163,6 +164,7 @@ public class QLearningRobot extends AdvancedRobot
         logger.error("Fresh QTable will be used instead.");
       }
     }
+
     return;
   }
 
@@ -188,6 +190,7 @@ public class QLearningRobot extends AdvancedRobot
   public void run()
   {
     logger.debug("run() invoked.");
+    m_currentRound += 1;
     if (initialized == false) {
       init();
       initialized = true;
@@ -238,8 +241,7 @@ public class QLearningRobot extends AdvancedRobot
       m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
       m_cumulativeReward += m_reward;
 
-      loops += 1;
-      m_qtable.updateRates(loops);
+      m_qtable.updateRates(m_currentRound);
 
       waitingForQAction = false;
     }
@@ -453,16 +455,26 @@ public class QLearningRobot extends AdvancedRobot
    */
   private double getEpsilon()
   {
-    /*int adaDivisor = 1000;
+    // A: Fixed value
+    /*return 0.2;*/
+
+    // B: Steps decrease
+    /*int adaDivisor = 7 * m_learningRounds;
     double min = 0.1;
     double max = 1;
-    double value = Math.max(min, Math.min(max, max - Math.log10(loops / adaDivisor)));
+    double value = Math.max(min, Math.min(max, max - Math.log10(m_currentRound / adaDivisor)));
     return value;*/
-    // Firstly explore, then switch to optimal policy
-    if (getRoundNum() < m_learningRounds) {
+
+    // C: Tangens decrease
+    double tanArg = (double)m_currentRound / (double)m_learningRounds * 0.785398;
+    double value = Math.max(0.0, 1.0 - Math.tan(tanArg));
+    return value;
+
+    // C: Firstly explore, then switch to optimal policy
+    /*if (getRoundNum() < m_learningRounds) {
       return 1;
     }
-    return 0;
+    return 0;*/
   }
 
 }  // class QLearningRobot
