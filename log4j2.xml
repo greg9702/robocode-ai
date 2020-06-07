@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
   <Appenders>
-    <File name="All" fileName="${sys:logPath}/full_log.txt">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-    </File>
     <File name="Base" fileName="${sys:logPath}/logs.txt">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </File>
@@ -28,9 +25,8 @@
   </Appenders>
   <Loggers>
     <Root level="DEBUG">
-      <AppenderRef ref="All"/>
     </Root>
-    <Logger name="base">
+    <Logger name="base" level="WARN">
       <AppenderRef ref="Base"/>
     </Logger>
     <Logger name="rewards">
