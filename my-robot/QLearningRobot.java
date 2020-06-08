@@ -425,35 +425,33 @@ public class QLearningRobot extends AdvancedRobot
         fire(firePower);
         break;
       case m_actionFront:
-        ahead(moveDistance);
+        setAhead(moveDistance);
         break;
       case m_actionFrontLeft:
         setTurnLeft(rotationDegrees);
-        execute(); // start turn, but does not wait until complete
-        ahead(moveDistance);
+        setAhead(moveDistance);
         break;
       case m_actionFrontRight:
         setTurnRight(rotationDegrees);
-        execute(); // start turn, but does not wait until complete
-        ahead(moveDistance);
+        setAhead(moveDistance);
         break;
       case m_actionBackLeft:
         setTurnLeft(rotationDegrees);
-        execute(); // start turn, but does not wait until complete
-        back(moveDistance);
+        setBack(moveDistance);
         break;
       case m_actionBackRight:
         setTurnRight(rotationDegrees);
-        execute(); // start turn, but does not wait until complete
-        back(moveDistance);
+        setBack(moveDistance);
         break;
       case m_actionBack:
-        back(moveDistance);
+        setBack(moveDistance);
         break;
       default:
         logger.error("Unknown action!");
     }
-    // TODO consider using turnGun[Left/Right]
+
+    // process events
+    execute();
 
     return;
   }
