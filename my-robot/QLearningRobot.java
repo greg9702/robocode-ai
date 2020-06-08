@@ -56,6 +56,8 @@ public class QLearningRobot extends AdvancedRobot
   int m_absAngleToEnemy_bins = 12;
   String m_distanceToEnemyParamName = "m_distanceToEnemyParamName";
   int m_distanceToEnemy_bins = 12;
+  String m_gunHeatParamName = "m_gunHeatParamName";
+  int m_gunHeat_bins = 2;
 
   // temporary store to remember things across many actions
   Double m_lastAbsAngleToEnemy = null;
@@ -131,9 +133,10 @@ public class QLearningRobot extends AdvancedRobot
       // new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
       // new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
       new Param(m_robotHeadingParamName, 0, 360, m_robotHeadingParamName_bins),
-      new Param(m_robotGunHeadingParamName, 0, 360, m_robotGunHeadingParamName_bins),
+      //new Param(m_robotGunHeadingParamName, 0, 360, m_robotGunHeadingParamName_bins),
       new Param(m_absAngleToEnemyParamName, 0, 360, m_absAngleToEnemy_bins),
-      new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins)
+      new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins),
+      new Param(m_gunHeatParamName, 0, 1, m_gunHeat_bins)
     )));
 
     initQTable();
@@ -393,10 +396,12 @@ public class QLearningRobot extends AdvancedRobot
     double yPos = s.getY();
     double heading = s.getHeading();
     double gunHeading = s.getGunHeading();
+    double gunHeat = (s.getGunHeat() > 0.0 ? 1 : 0);
     m_currentState.updateParam(m_robotXPosParamName, xPos);
     m_currentState.updateParam(m_robotYPosParamName, yPos);
     m_currentState.updateParam(m_robotHeadingParamName, heading);
     m_currentState.updateParam(m_robotGunHeadingParamName, gunHeading);
+    m_currentState.updateParam(m_gunHeatParamName, gunHeat);
     return;
   }
 

@@ -93,6 +93,21 @@ public class State
   }
 
   /**
+   * Gets parameter by name.
+   * @param String paramName
+   * @param Param
+   */
+  public Param getParam(String paramName)
+  {
+    for (Param p: m_params) {
+      if (p.getName().equals(paramName)) {
+        return p;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Converts current state to QTable row ID.
    * @return int
    */
