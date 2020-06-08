@@ -211,48 +211,54 @@ public class QLearningRobot extends AdvancedRobot
     // Initialization of the robot should be put here
     setColors(Color.green, Color.black, Color.black); // body,gun,radar
 
-    // Run radar scan as fast as possible - this is our first action
-    setTurnRadarRight(Double.POSITIVE_INFINITY);
-    execute();
-
     // Robot main loop
     while (true) {
 
-      State stateBeforeAction = new State(m_currentState);
-      Action action;
-      Random rand = new Random();
-      double epsilon = getEpsilon();
-      if (epsilon > rand.nextDouble()) {
-        // pick random action
-        int actionIndex = rand.nextInt(m_actions.size());
-        action = m_actions.get(actionIndex);
+      if (waitingForQAction == false) {
+        // Run radar scan
+        setTurnRadarRight(Double.POSITIVE_INFINITY);
+        execute();
       } else {
-        // pick best action
-        action = m_qtable.bestAction(m_currentState);
+        waitingForQAction = false;
+
+        State stateBeforeAction = new State(m_currentState);
+        Action action;
+        Random rand = new Random();
+        double epsilon = getEpsilon();
+        if (epsilon > rand.nextDouble()) {
+          // pick random action
+          int actionIndex = rand.nextInt(m_actions.size());
+          action = m_actions.get(actionIndex);
+        } else {
+          // pick best action
+          action = m_qtable.bestAction(m_currentState);
+        }
+
+        // Reset reward and execute
+        m_reward = 0;
+        performAction(action); // here scan events are triggered and performed!
+
+        // wait until execution is complete
+        waitFor(new MoveCompleteCondition(this));
+        waitFor(new TurnCompleteCondition(this));
+        waitFor(new GunTurnCompleteCondition(this));
+
+        // run execute() until onScannedEvent is invoked and completed
+        while (waitingForQAction == false) {
+          execute();
+        }
+
+        // TODO consider adding difference between our and enemy
+        // energy levels to reward.
+
+        // Update rewards (we need current state, without cleaned values, to predict qMax)
+        m_reward += m_aliveReward; // around 40 times per round
+        m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
+        m_cumulativeReward += m_reward;
+
+        m_qtable.updateRates(m_currentRound);
+
       }
-
-      // Reset reward and execute
-      m_reward = 0;
-      performAction(action); // here scan events are triggered and performed!
-
-      // wait until execution is complete
-      waitFor(new MoveCompleteCondition(this));
-      waitFor(new TurnCompleteCondition(this));
-      waitFor(new GunTurnCompleteCondition(this));
-
-      // TODO consider execute() while no scanned event
-
-      // TODO consider adding difference between our and enemy
-      // energy levels to reward.
-
-      // Update rewards (we need current state, without cleaned values, to predict qMax)
-      m_reward += m_aliveReward; // around 40 times per round
-      m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
-      m_cumulativeReward += m_reward;
-
-      m_qtable.updateRates(m_currentRound);
-
-      waitingForQAction = false;
     }
   }
 
@@ -277,6 +283,7 @@ public class QLearningRobot extends AdvancedRobot
       setTurnGunRight(Utils.normalRelativeAngleDegrees(getHeading() + e.getBearing() - getGunHeading()));
     }
 
+    // We are ready to run next Q step!
     waitingForQAction = true;
 
     return;
