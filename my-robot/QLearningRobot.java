@@ -239,6 +239,8 @@ public class QLearningRobot extends AdvancedRobot
 
       // wait until execution is complete
       waitFor(new MoveCompleteCondition(this));
+      waitFor(new TurnCompleteCondition(this));
+      waitFor(new GunTurnCompleteCondition(this));
 
       // TODO consider adding difference between our and enemy
       // energy levels to reward.
