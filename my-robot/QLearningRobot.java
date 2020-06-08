@@ -228,24 +228,21 @@ public class QLearningRobot extends AdvancedRobot
         action = m_qtable.bestAction(m_currentState);
       }
 
-      // If we already picked action then we can clear dynamic params,
-      // so they won't be reused in next steps
-      // m_currentState.updateParam(m_distanceToEnemyParamName, null);
-      // m_currentState.updateParam(m_absAngleToEnemyParamName, null);
-
       // Reset reward and execute
       m_reward = 0;
-      performAction(action);
+      performAction(action); // here scan events are triggered and performed!
 
       // wait until execution is complete
       waitFor(new MoveCompleteCondition(this));
       waitFor(new TurnCompleteCondition(this));
       waitFor(new GunTurnCompleteCondition(this));
 
+      // TODO consider execute() while no scanned event
+
       // TODO consider adding difference between our and enemy
       // energy levels to reward.
 
-      // Update rewards
+      // Update rewards (we need current state, without cleaned values, to predict qMax)
       m_reward += m_aliveReward; // around 40 times per round
       m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
       m_cumulativeReward += m_reward;
