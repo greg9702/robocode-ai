@@ -86,6 +86,7 @@ public class QLearningRobot extends AdvancedRobot
   static boolean initialized = false;
 
   boolean waitingForQAction = false;
+  boolean roundFinished;
 
   public QLearningRobot()
   {
@@ -143,6 +144,9 @@ public class QLearningRobot extends AdvancedRobot
 
     // log round params
     loggerHyperparams.info(m_qtable.m_alpha + "|" + getEpsilon() + "|" + m_qtable.m_gamma);
+
+    waitingForQAction = false;
+    roundFinished = false;
 
     return;
   }
@@ -245,6 +249,9 @@ public class QLearningRobot extends AdvancedRobot
 
         // run execute() until onScannedEvent is invoked and completed
         while (waitingForQAction == false) {
+          if (roundFinished == true) {
+            return;
+          }
           execute();
         }
 
@@ -491,6 +498,24 @@ public class QLearningRobot extends AdvancedRobot
       return 1;
     }
     return 0;*/
+  }
+
+  /**
+   * onWin: What to do when battle is won
+   */
+  public void onWin(WinEvent event)
+  {
+    logger.info("Round win!");
+    roundFinished = true;
+  }
+
+  /**
+   * onDeath: What to do when robot is dead
+   */
+  public void onDeath(DeathEvent event)
+  {
+    logger.info("Round lose!");
+    roundFinished = true;
   }
 
 }  // class QLearningRobot
