@@ -237,6 +237,9 @@ public class QLearningRobot extends AdvancedRobot
       m_reward = 0;
       performAction(action);
 
+      // wait until execution is complete
+      waitFor(new MoveCompleteCondition(this));
+
       // TODO consider adding difference between our and enemy
       // energy levels to reward.
 
