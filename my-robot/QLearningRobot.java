@@ -75,7 +75,7 @@ public class QLearningRobot extends AdvancedRobot
   // rewards
   private double m_hitRobotReward = -10;
   private double m_bulletHitReward = 30;
-  private double m_hitByBulletReward = -50;
+  private double m_hitByBulletReward = -40;
   private double m_bulletMissedReward = 0;
   private double m_hitWallReward = -6;
   private double m_aliveReward = 1;
@@ -133,7 +133,7 @@ public class QLearningRobot extends AdvancedRobot
     m_currentState = new State(new ArrayList<>(Arrays.asList(
       // new Param(m_robotXPosParamName, 0, getBattleFieldWidth(), m_robotXPos_bins),
       // new Param(m_robotYPosParamName, 0, getBattleFieldHeight(), m_robotYPos_bins),
-      new Param(m_robotHeadingParamName, 0, 360, m_robotHeadingParamName_bins),
+      // new Param(m_robotHeadingParamName, 0, 360, m_robotHeadingParamName_bins),
       //new Param(m_robotGunHeadingParamName, 0, 360, m_robotGunHeadingParamName_bins),
       new Param(m_absAngleToEnemyParamName, 0, 360, m_absAngleToEnemy_bins),
       new Param(m_distanceToEnemyParamName, 0, maxDistance, m_distanceToEnemy_bins),
@@ -258,12 +258,14 @@ public class QLearningRobot extends AdvancedRobot
         // TODO consider adding difference between our and enemy
         // energy levels to reward.
 
-        // Update rewards (we need current state, without cleaned values, to predict qMax)
-        m_reward += m_aliveReward; // around 40 times per round
-        m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
-        m_cumulativeReward += m_reward;
+        if (m_currentRound < m_learningRounds) {
+          // Update rewards (we need current state, without cleaned values, to predict qMax)
+          m_reward += m_aliveReward; // around 40 times per round
+          m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
+          m_cumulativeReward += m_reward;
 
-        m_qtable.updateRates(m_currentRound);
+          m_qtable.updateRates(m_currentRound);
+        }
 
       }
     }
@@ -439,6 +441,13 @@ public class QLearningRobot extends AdvancedRobot
         }
         // Shoot!
         fire(firePower);
+        try {
+          double gunHeat = m_currentState.getParam(m_gunHeatParamName).getQuantizedValue();
+          if (gunHeat != 0.0) {
+            m_reward -= 3;
+          }
+        } catch (RobotException e) {
+        }
         break;
       case m_actionFront:
         setAhead(moveDistance);

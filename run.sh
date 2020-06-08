@@ -60,8 +60,8 @@ BATTLE_PATH=$(mktemp --suffix .battle)
 ROUNDS_NUM=$(($TRAIN_ROUNDS + $TEST_ROUNDS))
 printf "robocode.battle.numRounds=${ROUNDS_NUM}\n" >> ${BATTLE_PATH}
 printf "robocode.battle.selectedRobots=iwium.QLearningRobot*,sample.SpinBot\n" >> ${BATTLE_PATH}
-#printf "robocode.battle.initialPositions=(224,240,60)" >> ${BATTLE_PATH}
-ROBOCODE_ARGS="${ROBOCODE_ARGS} -battle ${BATTLE_PATH}"
+printf "robocode.battle.initialPositions=(224,240,60),(100,100,90)" >> ${BATTLE_PATH}
+ROBOCODE_ARGS="${ROBOCODE_ARGS} -battle ${BATTLE_PATH} -results /tmp/results.txt"
 
 if [[ $ENABLE_DISPLAY -eq "0" ]]; then
   ROBOCODE_ARGS="${ROBOCODE_ARGS} -nodisplay"
@@ -78,9 +78,9 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 # results #
 ###########
 
-(
-  cd ${SCRIPT_PATH}/utils
-  pipenv run python states_hist.py
-  pipenv run python plot_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
-  pipenv run python win_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
-)
+# (
+#   cd ${SCRIPT_PATH}/utils
+#   pipenv run python states_hist.py
+#   pipenv run python plot_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
+#   pipenv run python win_stats.py  $TRAIN_ROUNDS $TEST_ROUNDS
+# )
