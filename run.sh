@@ -70,7 +70,7 @@ fi
 export _JAVA_AWT_WM_NONREPARENTING=1
 (
   cd ${SCRIPT_PATH}/robocode
-  java ${JVM_ARGS} -cp ./libs/robocode.jar:${SCRIPT_PATH}/log4j/log4j-api-2.13.2.jar:${SCRIPT_PATH}/log4j/log4j-core-2.13.2.jar robocode.Robocode ${ROBOCODE_ARGS}
+  java ${JVM_ARGS} -cp ./libs/robocode.jar:${SCRIPT_PATH}/log4j/log4j-api-2.14.0.jar:${SCRIPT_PATH}/log4j/log4j-core-2.14.0.jar robocode.Robocode ${ROBOCODE_ARGS}
 )
 
 
