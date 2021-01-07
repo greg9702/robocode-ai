@@ -1,0 +1,13 @@
+= Robocode Robot
+
+== Prerequirements
+
+- java8-jdk
+
+== Setup
+
+. Install __robocode__ into _robocode_ directory.
+
+. Install __log4j__ into _log4j_ directory.
+
+. Execute _./compile.sh_, then _./run.sh_.

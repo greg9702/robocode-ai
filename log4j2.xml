@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+  <Appenders>
+    <File name="Base" fileName="${sys:logPath}/logs.txt">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <File name="MiddleBase" fileName="${sys:logPath}/middle.txt">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <File name="HunterBase" fileName="${sys:logPath}/hunter.txt">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+    </File>
+    <File name="Rewards" fileName="${sys:logPath}/rewards.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+    <File name="States" fileName="${sys:logPath}/states.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+    <File name="Table" fileName="${sys:logPath}/table.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+    <File name="Energy" fileName="${sys:logPath}/energy.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+    <File name="Environment" fileName="${sys:logPath}/env.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+    <File name="Hyperparams" fileName="${sys:logPath}/hyperparams.txt">
+      <PatternLayout pattern="%msg%n"/>
+    </File>
+  </Appenders>
+  <Loggers>
+    <Root level="DEBUG">
+    </Root>
+    <Logger name="base" level="WARN">
+      <AppenderRef ref="Base"/>
+    </Logger>
+    <Logger name="middlebase">
+      <AppenderRef ref="MiddleBase"/>
+    </Logger>
+    <Logger name="hunterbase">
+      <AppenderRef ref="HunterBase"/>
+    </Logger>
+    <Logger name="rewards">
+      <AppenderRef ref="Rewards"/>
+    </Logger>
+    <Logger name="states">
+      <AppenderRef ref="States"/>
+    </Logger>
+    <Logger name="table">
+      <AppenderRef ref="Table"/>
+    </Logger>
+    <Logger name="energy">
+      <AppenderRef ref="Energy"/>
+    </Logger>
+    <Logger name="environment">
+      <AppenderRef ref="Environment"/>
+    </Logger>
+    <Logger name="hyperparams">
+      <AppenderRef ref="Hyperparams"/>
+    </Logger>
+  </Loggers>
+</Configuration>
