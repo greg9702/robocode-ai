@@ -16,12 +16,8 @@ X = pd.read_csv(SCRIPT_PATH + FILE_PATH, sep=" ", header=None, skiprows=2, useco
 
 q_of_all_actions: np.ndarray = X.sum(axis=1).values
 
-print(q_of_all_actions.shape)
-
 q_of_all_headings = [sum(q_of_all_actions[current: current + NO_HEADING_BINS]) for current in
                      range(0, len(q_of_all_actions), NO_HEADING_BINS)]
-
-print(len(q_of_all_headings))
 
 Q = np.ndarray(shape=(NO_X_BINS, NO_Y_BINS))
 

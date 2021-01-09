@@ -11,29 +11,31 @@ import robocode.util.Utils;
 public class DeterministicRobot extends AdvancedRobot {
     private static final Logger m_logger = LogManager.getLogger("hunterbase");
 
-    double m_xpos = 0;
+    protected double m_xpos = 0;
 
     public void run() {
         turnLeft(getHeading() - 90);
         while (true) {
-            setTurnRadarRight(Double.POSITIVE_INFINITY);
-            if (m_xpos < getBattleFieldWidth() * 0.2) {
-                turnLeft(getHeading() - 90);
-            }
-            else if (m_xpos > getBattleFieldWidth()*0.8) {
-                m_logger.debug("XD");
-                turnLeft(getHeading() + 90);
-            }
-            setAhead(Double.POSITIVE_INFINITY);
-            execute();
+            turnLeft(getHeading() - 90);
+
+//            setTurnRadarRight(Double.POSITIVE_INFINITY);
+//            if (m_xpos < getBattleFieldWidth() * 0.2) {
+//                turnLeft(getHeading() - 90);
+//            }
+//            else if (m_xpos > getBattleFieldWidth()*0.8) {
+//                m_logger.debug("XD");
+//                turnLeft(getHeading() + 90);
+//            }
+//            setAhead(Double.POSITIVE_INFINITY);
+//            execute();
         }
     }
 
     public void onScannedRobot(ScannedRobotEvent e) {
         turnGunRight(Utils.normalRelativeAngleDegrees(getHeading() + e.getBearing() - getGunHeading()));
-        if (getGunHeat() == 0) {
-            fire(3);
-        }
+//        if (getGunHeat() == 0) {
+//            fire(3);
+//        }
     }
 
     /**

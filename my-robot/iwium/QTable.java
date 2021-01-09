@@ -1,12 +1,12 @@
 package iwium;
 
-import robocode.*;
-
-import java.io.*;
-import java.util.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import robocode.RobocodeFileOutputStream;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class QTable
 {
@@ -39,7 +39,7 @@ public class QTable
 
   // 100 means range: <-50, 50>
   // 0 means that all values will be filled with 0s.
-  private final int initializationRange = 100;
+  private final int initializationRange = 10;
 
   public QTable(ArrayList<Action> actions, int numStates, double alphaDivisor, double minAlpha, double gamma)
   {
