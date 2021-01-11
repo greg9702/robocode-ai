@@ -116,35 +116,6 @@ public class Driver extends CustomQRobot {
         m_currentState.updateParam(m_stateParamDistanceToEnemy, enemyDistance);
     }
 
-    private void bounceFromWall(int safeDistance) {
-        double fieldWidth = getBattleFieldWidth();
-        double fieldHeight = getBattleFieldHeight();
-        double xPos = getX();
-        double yPos = getY();
-        double currentAngle = getHeading();
-        // distances to walls: left, bottom, right, top
-        double[] wallDistances = {xPos, yPos, fieldWidth - xPos, fieldHeight - yPos};
-        double minDistance = Arrays.stream(wallDistances).min().getAsDouble();
-        double angleDiff = 0;
-        // diffs to opposite direction
-        if (wallDistances[0] == minDistance) {
-            angleDiff = 90 - currentAngle;
-        } else if (wallDistances[1] == minDistance) {
-            angleDiff = 0 - currentAngle;
-        } else if (wallDistances[2] == minDistance) {
-            angleDiff = 270 - currentAngle;
-        } else if (wallDistances[3] == minDistance) {
-            angleDiff = 180 - currentAngle;
-        }
-        if (angleDiff > 180) {
-            turnLeft(angleDiff - 180);
-        } else {
-            turnRight(angleDiff);
-        }
-        // note: minDistance is probably always equal to 0
-        ahead(safeDistance - minDistance);
-    }
-
     public void onHitByBullet(HitByBulletEvent event) {
         m_reward -= 3;
     }
