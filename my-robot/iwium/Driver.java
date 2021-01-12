@@ -38,6 +38,10 @@ public class Driver extends CustomQRobot {
 
     private static final String m_actionDoNothing = "nothing";
 
+    private static final String m_stateEnemyBearing = "enemyBearing";
+    private static final int m_enenmyBearingBins = 8;
+
+
     double m_enemyEnergy;
 
     private void init() {
@@ -50,13 +54,15 @@ public class Driver extends CustomQRobot {
         m_actions.add(new Action(1, m_actionDoNothing));
         m_actions.add(new Action(2, m_actionAhead));
         m_actions.add(new Action(3, m_actionBack));
+        m_actions.add(new Action(4, m_actionTurnLeft));
+        m_actions.add(new Action(5, m_actionTurnRight));
 
         final int maxDistance = (int) Math.sqrt(Math.pow(getBattleFieldWidth(), 2) + Math.pow(getBattleFieldHeight(), 2));
 
         m_currentState = new State(new ArrayList<>(Arrays.asList(
                 new Param(m_stateParamDistanceToEnemy, 0, maxDistance, m_distanceToEnemyBins),
-                new Param(m_stateParamEnemyEnergyDelta, 0, 3, m_enemyEnergyDelta)
-//                new Param(m_stateParamXpos, 0, getBattleFieldWidth(), m_posBins),
+                new Param(m_stateParamEnemyEnergyDelta, 0, 3, m_enemyEnergyDelta),
+                new Param(m_stateEnemyBearing, -180, 180, m_enenmyBearingBins)
 //                new Param(m_stateParamYpos, 0, getBattleFieldHeight(), m_posBins)
         )));
 
@@ -95,7 +101,7 @@ public class Driver extends CustomQRobot {
             m_cumulativeReward += m_reward;
             m_qtable.updateRewards(stateBeforeAction, action, m_reward, m_currentState);
 
-            saveQTable();
+//            saveQTable();
         }
     }
 
@@ -110,6 +116,12 @@ public class Driver extends CustomQRobot {
                 break;
             case m_actionBack:
                 moveBack();
+                break;
+            case m_actionTurnLeft:
+                turnLeft();
+                break;
+            case m_actionTurnRight:
+                turnRight();
                 break;
             case m_actionDoNothing:
                 break;
@@ -129,6 +141,7 @@ public class Driver extends CustomQRobot {
 
         System.out.println("Enenmy energy delta: " + (m_enemyEnergy - currentEnergy));
         m_currentState.updateParam(m_stateParamEnemyEnergyDelta, m_enemyEnergy - currentEnergy);
+        m_currentState.updateParam(m_stateEnemyBearing, e.getBearing());
 
         m_enemyEnergy = currentEnergy;
 
