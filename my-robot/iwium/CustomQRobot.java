@@ -72,6 +72,14 @@ public class CustomQRobot extends AdvancedRobot {
         turnLeft(getHeading() + 90);
     }
 
+    protected void moveAhead() {
+        ahead(50);
+    }
+
+    protected void moveBack() {
+        back(20);
+    }
+
     public void onRoundEnded(RoundEndedEvent e) {
         m_loggerRewards.debug(m_cumulativeReward);
         if (m_roundNo++ > m_trainRounds) {
