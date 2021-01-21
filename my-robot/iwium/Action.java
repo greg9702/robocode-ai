@@ -2,8 +2,8 @@ package iwium;
 
 public class Action
 {
-  private int m_id;
-  private String m_name;
+  private final int m_id;
+  private final String m_name;
 
   public Action(int id, String name)
   {
@@ -11,25 +11,14 @@ public class Action
     this.m_name = name;
   }
 
-  /**
-   * Gets param name.
-   * @return String
-   */
   public String getName()
   {
-    String name = m_name;
-    return name;
+    return m_name;
   }
 
-  /**
-   * Constructs String that may be used to create hashmap key.
-   * @return String
-   * Note: used only for script BC
-   */
   public String getStringKey()
   {
-    String key = m_id + "," + m_name;
-    return key;
+    return m_id + "," + m_name;
   }
 
 };

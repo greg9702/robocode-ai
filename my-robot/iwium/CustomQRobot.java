@@ -27,7 +27,7 @@ public class CustomQRobot extends AdvancedRobot {
 
     private static final double m_alphaDivisor = 2;
     private static final double m_minAlpha = 0.1;
-    protected static double m_epsilon = 0.1;
+    protected static double m_epsilon = 0.0;
     private static final double m_gamma = 1;
 
     protected static QTable m_qtable = null;
@@ -64,14 +64,6 @@ public class CustomQRobot extends AdvancedRobot {
         }
     }
 
-    protected void turnHorizontallyRight() {
-        turnLeft(getHeading() - 90);
-    }
-
-    protected void turnHorizontallyLeft() {
-        turnLeft(getHeading() + 90);
-    }
-
     protected void moveAhead() {
         ahead(50);
     }
@@ -87,22 +79,16 @@ public class CustomQRobot extends AdvancedRobot {
         }
     }
 
-    /**
-     * Finds closest wall and runs toward opposite direction.
-     *
-     * @param int safeDistance
-     */
-    protected void bounceFromWall(int safeDistance) {
+    protected void bounceFromWall() {
         double fieldWidth = getBattleFieldWidth();
         double fieldHeight = getBattleFieldHeight();
         double xPos = getX();
         double yPos = getY();
         double currentAngle = getHeading();
-        // distances to walls: left, bottom, right, top
         double[] wallDistances = {xPos, yPos, fieldWidth - xPos, fieldHeight - yPos};
         double minDistance = Arrays.stream(wallDistances).min().getAsDouble();
         double angleDiff = 0;
-        // diffs to opposite direction
+
         if (wallDistances[0] == minDistance) {
             angleDiff = 90 - currentAngle;
         } else if (wallDistances[1] == minDistance) {
@@ -119,7 +105,7 @@ public class CustomQRobot extends AdvancedRobot {
         } else {
             turnRight(angleDiff);
         }
-        // note: minDistance is probably always equal to 0
-        ahead(safeDistance - minDistance);
+
+        ahead(100 - minDistance);
     }
 }

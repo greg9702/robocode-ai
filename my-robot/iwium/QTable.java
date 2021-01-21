@@ -13,33 +13,22 @@ public class QTable
   private static final Logger logger = LogManager.getLogger("base");
   private static final Logger loggerTable = LogManager.getLogger("table");
 
-  // values that describe game profit of performing action in given state
-  //   rows -> states
-  //   cols -> actions
-  private double m_values[][];
+  private final double[][] m_values;
 
-  // additional array to store visits count of each states/actions
-  private int m_valuesVisits[][];
-  private int m_uniqueVisits = 0;
+  private final int[][] m_valuesVisits;
+  private int m_uniqueVisits;
 
-  // reduntant container, used only for compatibility with states_hist.py script
-  private HashMap<String, Double> m_valuesV2;
+  private final HashMap<String, Double> m_valuesV2;
 
-  // list of possible actions
-  private ArrayList<Action> m_actions;
+  private final ArrayList<Action> m_actions;
 
-  private double m_alphaDivisor; // learning rate - log divisor
-  private double m_minAlpha; // learning rate - log divisor
+  private final double m_alphaDivisor;
+  private final double m_minAlpha;
 
-  // internal state
-  public double m_alpha = 1.0; // learning rate (always start at 1.0)
-  public double m_gamma; // discount factor
+  public double m_alpha = 1.0;
+  public double m_gamma;
 
-  private int m_numStates;
-
-  // 100 means range: <-50, 50>
-  // 0 means that all values will be filled with 0s.
-  private final int initializationRange = 10;
+  private final int m_numStates;
 
   public QTable(ArrayList<Action> actions, int numStates, double alphaDivisor, double minAlpha, double gamma)
   {
@@ -47,7 +36,7 @@ public class QTable
     m_values = new double[numStates][actions.size()];
     m_valuesVisits = new int[numStates][actions.size()];
     m_uniqueVisits = 0;
-    m_valuesV2 = new HashMap<String,Double>();
+    m_valuesV2 = new HashMap<>();
     m_actions = actions;
     m_alphaDivisor = alphaDivisor;
     m_minAlpha = minAlpha;
@@ -59,26 +48,20 @@ public class QTable
   public void initialize() {
     for (int i = 0; i < m_numStates; i++) {
       for (int j = 0; j < m_actions.size(); j++) {
+        int initializationRange = 10;
         m_values[i][j] = (Math.random() - 0.5) * initializationRange;
         m_valuesVisits[i][j] = 0;
       }
     }
-    return;
   }
 
-  /**
-   * Dumps current instance to file.
-   * @param File
-   */
   public void save(RobocodeFileOutputStream fout) throws IOException
   {
-    // BC logging of states distribution
     for (String key : m_valuesV2.keySet()) {
       loggerTable.debug(key + ": " + m_valuesV2.get(key));
     }
 
-    // save table
-    PrintStream w = null;
+    PrintStream w;
     w = new PrintStream(fout);
     w.println(m_numStates);
     w.println(m_actions.size());
@@ -96,12 +79,7 @@ public class QTable
     w.close();
   }
 
-  /**
-   * Loads QTable values from file.
-   * Note: hyperparams are not preserved.
-   * @param File
-   */
-  public void loadValues(File f) throws FileNotFoundException, IOException
+  public void loadValues(File f) throws IOException
   {
     BufferedReader r = new BufferedReader(new FileReader(f));
 
@@ -117,34 +95,22 @@ public class QTable
         m_values[i][j] = Double.parseDouble(actionsVals[j]);
       }
     }
-
-    return;
   }
 
-  /**
-   * Updates reward in QTable.
-   * @param State s_old
-   * @param Action a
-   * @param double reward
-   * @param State s_new
-   */
   public void updateRewards(State s_old, Action a, double reward, State s_new)
   {
     double Q1 = getQ(s_old, a);
     Action bestNewAction = bestAction(s_new);
     double maxQ = getQ(s_new, bestNewAction);
 
-    double updatedQ = Q1 + m_alpha * (reward + m_gamma * maxQ - Q1);
+    double updatedQ = Q1 + 0.1 * (reward + m_gamma * maxQ - Q1);
     setQ(s_old, a, updatedQ);
 
-    // only for script compatibility
     String key = "";
     key += s_old.getStringKey();
     key += ";";
     key += a.getStringKey();
-    m_valuesV2.put(key, new Double(updatedQ));
-
-    return;
+    m_valuesV2.put(key, updatedQ);
   }
 
   double getQ(State state, Action a)
@@ -160,23 +126,16 @@ public class QTable
     int actionId = m_actions.indexOf(a);
     m_values[stateId][actionId] = Q;
 
-    // save visit
     if (m_valuesVisits[stateId][actionId] == 0) {
       m_uniqueVisits += 1;
     }
     m_valuesVisits[stateId][actionId] += 1;
-
-    return;
   }
 
-  /**
-   * Finds best known action for given state.
-   * @param State state
-   */
   Action bestAction(State state)
   {
     Action bestAction = m_actions.get(0);
-    Double bestValue = getQ(state, bestAction);
+    double bestValue = getQ(state, bestAction);
 
     for (Action action: m_actions) {
       double value = getQ(state, action);
@@ -189,26 +148,15 @@ public class QTable
     return bestAction;
   }
 
-  /**
-   * Gets number of already explored states.
-   * @return int
-   */
   public int getNumberOfExploredStates()
   {
     return m_uniqueVisits;
   }
 
-  /**
-   * Updates learning rate.
-   * @param long rounds
-   */
   public void updateRates(long rounds)
   {
-    double min = m_minAlpha;
     double max = 1.0;
-    double value = Math.max(min, Math.min(max, max - Math.log10((double)rounds / m_alphaDivisor)));
-    m_alpha = value;
-    return;
+    m_alpha = Math.max(m_minAlpha, Math.min(max, max - Math.log10((double)rounds / m_alphaDivisor)));
   }
 
-}  // class QTable
+}

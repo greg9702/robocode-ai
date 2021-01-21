@@ -52,11 +52,9 @@ public class MiddleRobot extends CustomQRobot {
             Random rand = new Random();
             double epsilon = m_epsilon;
             if (epsilon > rand.nextDouble()) {
-                // pick random action
                 int actionIndex = rand.nextInt(m_actions.size());
                 action = m_actions.get(actionIndex);
             } else {
-                // pick best action
                 action = m_qtable.bestAction(m_currentState);
             }
 
@@ -100,9 +98,6 @@ public class MiddleRobot extends CustomQRobot {
         execute();
     }
 
-    /**
-     * What to do on every status (tick) update.
-     */
     public void onStatus(StatusEvent e) {
         if (m_currentState == null) {
             m_logger.info("resetEnvironment() not called yet. Skipping onStatus.");
@@ -117,10 +112,6 @@ public class MiddleRobot extends CustomQRobot {
         m_currentState.updateParam("robotYPos", yPos);
         m_currentState.updateParam("robotHeading", heading);
 
-//        additional reward for reaching middle - easy task
-//        if (Math.abs(getBattleFieldWidth() / 2 - xPos) < 100 && Math.abs(getBattleFieldHeight() / 2 - yPos) < 100) {
-//            m_reward += 10;
-//        }
     }
 
     public void onHitWall(HitWallEvent e) {
